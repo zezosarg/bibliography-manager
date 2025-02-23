@@ -25,8 +25,6 @@ cd your-project-name
 npm install
 ```
 
-**Having issues installing? See our [debugging guide](https://github.com/electron-react-boilerplate/electron-react-boilerplate/issues/400)**
-
 ## Starting Development
 
 Start the app in the `dev` environment:
@@ -45,4 +43,4 @@ npm run package
 
 ## License
 
-MIT © [Bibliography manager](https://github.com/electron-react-boilerplate)
+MIT ©
