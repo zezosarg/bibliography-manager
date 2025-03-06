@@ -1,24 +1,26 @@
-// import React from 'react';
+import React from 'react';
+import './styles.css';
 
 // interface Library {
 //   id: number;
 //   name: string;
 // }
 
-// interface SidebarProps {
-//   libraries: Library[];
-// }
+const libraries = [
+  { id: 1, name: 'Library 1' },
+  { id: 2, name: 'Library 2' },
+];
 
-// const Sidebar: React.FC<SidebarProps> = ({ libraries }) => {
-//   return (
-//     <div className="sidebar">
-//       <ul>
-//         {libraries.map((library) => (
-//           <li key={library.id}>{library.name}</li>
-//         ))}
-//       </ul>
-//     </div>
-//   );
-// };
+function Sidebar() {
+  return (
+    <div className="sidebar">
+      {libraries.map((library) => (
+        <div key={library.id} className="sidebar-row">
+          {library.name}
+        </div>
+      ))}
+    </div>
+  );
+}
 
-// export default Sidebar;
+export default Sidebar;

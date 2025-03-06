@@ -14,9 +14,9 @@ body {
   );
   font-family: sans-serif;
   overflow-y: hidden;
-  display: flex;
+  /* display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: center; */
 }
 
 button {
@@ -54,9 +54,9 @@ a:hover {
   text-decoration: none;
 }
 
-.Hello {
+/* .Hello {
   display: flex;
   justify-content: center;
   align-items: center;
   margin: 20px 0;
-}
+} */
