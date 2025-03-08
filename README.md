@@ -13,11 +13,16 @@
 </p>
 
 ## Requirements
-
 Node.js version 20.10.0 and npm version 10.2.3
 
-## Install
+## Linux
+```bash
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs=20.10.0-1nodesource1
+sudo npm install -g npm@10.2.3
+```
 
+## Install
 Clone the repo and install dependencies:
 
 ```bash
@@ -26,7 +31,6 @@ npm install
 ```
 
 ## Starting Development
-
 Start the app in the `dev` environment:
 
 ```bash
@@ -34,7 +38,6 @@ npm start
 ```
 
 ## Packaging for Production
-
 To package apps for the local platform:
 
 ```bash
@@ -42,5 +45,4 @@ npm run package
 ```
 
 ## License
-
 MIT ©
