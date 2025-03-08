@@ -16,6 +16,12 @@
 
 Node.js version 20.10.0 and npm version 10.2.3
 
+## Linux
+
+curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
+sudo apt-get install -y nodejs=20.10.0-1nodesource1
+sudo npm install -g npm@10.2.3
+
 ## Install
 
 Clone the repo and install dependencies:
