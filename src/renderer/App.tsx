@@ -2,7 +2,14 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 // import icon from '../../assets/icon.svg';
 import './App.css';
 import { useState } from 'react';
-import { Box, CssBaseline, Toolbar, Paper, Typography } from '@mui/material';
+import {
+  Box,
+  CssBaseline,
+  Toolbar,
+  Paper,
+  Typography,
+  AppBar,
+} from '@mui/material';
 import Sidebar from './components/Sidebar';
 
 function Home() {
@@ -19,25 +26,19 @@ function Home() {
   };
 
   return (
-    <Box sx={{ display: 'flex' }}>
+    <Box sx={{}}>
       <CssBaseline />
-      <Sidebar onRecordClick={handleRecordClick} />
-      {/* <Box
-        component="main"
-        sx={{
-          flexGrow: 1,
-          bgcolor: 'background.default',
-          p: 3,
-        }}
-      > */}
-      {/* <Toolbar /> */}
-      {/* <Typography variant="h4" gutterBottom>
-          Main Content Area
-        </Typography> */}
-      {/* Other content goes here */}
-      {/* </Box> */}
 
-      {/* Display selected record details */}
+      <AppBar position="fixed">
+        <Toolbar>
+          <Typography variant="h6" sx={{ flexGrow: 1 }}>
+            My Application
+          </Typography>
+        </Toolbar>
+      </AppBar>
+
+      <Sidebar onRecordClick={handleRecordClick} />
+
       {selectedRecord ? (
         <Paper sx={{ padding: 3 }}>
           <Typography variant="h5" gutterBottom>
