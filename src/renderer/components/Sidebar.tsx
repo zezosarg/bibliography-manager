@@ -27,19 +27,20 @@ interface SidebarProps {
 function Sidebar({ onRecordClick }: SidebarProps) {
   return (
     <Drawer
+      variant="permanent"
       sx={{
-        width: 250,
+        width: 240,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: 250,
+          width: 240,
           boxSizing: 'border-box',
+          // position: 'relative',
+          top: '64px', // Offset to place below the top bar (height of the AppBar)
         },
       }}
-      variant="permanent"
-      anchor="left"
     >
-      <Box sx={{ padding: 2 }}>
-        <Typography variant="h6" component="div" sx={{ marginTop: 4 }}>
+      <Box sx={{ padding: 1 }}>
+        <Typography variant="h6" component="div" sx={{ marginTop: 1 }}>
           User List
         </Typography>
         <List>
