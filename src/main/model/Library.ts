@@ -1,12 +1,16 @@
 // Library class to represent a collection of BibTeX references
+import path from 'path';
 import Reference from './Reference';
 
 export default class Library {
+  name: string;
+
   references: Reference[];
 
   filePath: string;
 
   constructor(filePath: string) {
+    this.name = path.basename(filePath);
     this.references = [];
     this.filePath = filePath;
   }

@@ -7,24 +7,14 @@ import {
   ListItemText,
   Typography,
 } from '@mui/material';
-
-const listData = [
-  { id: 1, name: 'John Doe', age: 28, job: 'Developer' },
-  { id: 2, name: 'Jane Smith', age: 34, job: 'Designer' },
-  { id: 3, name: 'Emily Johnson', age: 24, job: 'Product Manager' },
-  { id: 4, name: 'Michael Brown', age: 30, job: 'Developer' },
-];
+import Library from '../../main/model/Library';
 
 interface SidebarProps {
-  onRecordClick: (item: {
-    id: number;
-    name: string;
-    age: number;
-    job: string;
-  }) => void;
+  onRecordClick: (item: Library) => void;
+  libraries: Library[];
 }
 
-function Sidebar({ onRecordClick }: SidebarProps) {
+function Sidebar({ onRecordClick, libraries }: SidebarProps) {
   return (
     <Drawer
       variant="permanent"
@@ -41,14 +31,18 @@ function Sidebar({ onRecordClick }: SidebarProps) {
     >
       <Box sx={{ padding: 1 }}>
         <Typography variant="h6" component="div" sx={{ marginTop: 1 }}>
-          User List
+          Libraries
         </Typography>
         <List>
-          {listData.map((item) => (
-            <ListItem key={item.id} divider onClick={() => onRecordClick(item)}>
+          {libraries.map((item) => (
+            <ListItem
+              key={item.name}
+              divider
+              onClick={() => onRecordClick(item)}
+            >
               <ListItemText
                 primary={item.name}
-                secondary={`Age: ${item.age}, Job: ${item.job}`}
+                // secondary={`Age: ${item.age}, Job: ${item.job}`}
               />
             </ListItem>
           ))}

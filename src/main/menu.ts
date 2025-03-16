@@ -203,7 +203,7 @@ export default class MenuBuilder {
             label: '&Open Library',
             accelerator: 'Ctrl+O',
             click: () => {
-              handleFilePick();
+              handleFilePick(this.mainWindow);
             },
           },
           {

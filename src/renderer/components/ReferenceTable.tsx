@@ -9,6 +9,7 @@ import {
   TableBody,
   Paper,
 } from '@mui/material';
+import Library from '../../main/model/Library';
 
 const rows = [
   { id: 1, name: 'John Doe', age: 28, profession: 'Engineer' },
@@ -17,7 +18,11 @@ const rows = [
   { id: 4, name: 'Bob Brown', age: 40, profession: 'Manager' },
 ];
 
-function ReferenceTable() {
+interface ReferenceTableProps {
+  selectedRecord: Library | null;
+}
+
+function ReferenceTable({ selectedRecord }: ReferenceTableProps) {
   return (
     <Box
       component="main"
@@ -30,30 +35,44 @@ function ReferenceTable() {
         minHeight: '100vh',
       }}
     >
-      <h1>Main Content Area</h1>
+      <h1>References</h1>
 
-      <TableContainer component={Paper}>
-        <Table sx={{ minWidth: 650 }} aria-label="simple table">
-          <TableHead>
-            <TableRow>
-              <TableCell>ID</TableCell>
-              <TableCell>Name</TableCell>
-              <TableCell>Age</TableCell>
-              <TableCell>Profession</TableCell>
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {rows.map((row) => (
-              <TableRow key={row.id}>
-                <TableCell>{row.id}</TableCell>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.age}</TableCell>
-                <TableCell>{row.profession}</TableCell>
+      {selectedRecord ? (
+        <TableContainer component={Paper}>
+          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+            <TableHead>
+              <TableRow>
+                <TableCell>Type</TableCell>
+                <TableCell>Title</TableCell>
+                <TableCell>Author</TableCell>
+                <TableCell>Journal</TableCell>
+                <TableCell>Volume</TableCell>
+                <TableCell>Number</TableCell>
+                <TableCell>Pages</TableCell>
+                <TableCell>Year</TableCell>
+                <TableCell>Publisher</TableCell>
               </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </TableContainer>
+            </TableHead>
+            <TableBody>
+              {selectedRecord.references.map((row) => (
+                <TableRow key={row.key}>
+                  <TableCell>{row.entryType}</TableCell>
+                  <TableCell>{row.title}</TableCell>
+                  <TableCell>{row.author}</TableCell>
+                  <TableCell>{row.journal}</TableCell>
+                  <TableCell>{row.volume}</TableCell>
+                  <TableCell>{row.number}</TableCell>
+                  <TableCell>{row.pages}</TableCell>
+                  <TableCell>{row.year}</TableCell>
+                  <TableCell>{row.publisher}</TableCell>
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+      ) : (
+        <p>Select a Library</p>
+      )}
     </Box>
   );
 }

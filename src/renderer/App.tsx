@@ -1,30 +1,43 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 // import icon from '../../assets/icon.svg';
 import './App.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Box, CssBaseline } from '@mui/material';
 import Sidebar from './components/Sidebar';
 import ReferenceTable from './components/ReferenceTable';
 import Header from './components/Header';
+import Library from '../main/model/Library';
 
 function Home() {
-  interface Record {
-    name: string;
-    age: number;
-    job: string;
-  }
+  const [selectedRecord, setSelectedRecord] = useState<Library | null>(null);
+  const [libraries, setLibraries] = useState<Library[]>([]);
 
-  const [selectedRecord, setSelectedRecord] = useState<Record | null>(null);
-
-  const handleRecordClick = (record: Record) => {
+  const handleRecordClick = (record: Library) => {
     setSelectedRecord(record);
   };
+
+  useEffect(() => {
+    const handleLibraryData = (...args: unknown[]) => {
+      const library = args[0] as Library;
+      // console.log('Received data:', library);
+      setLibraries((prevLibraries) => {
+        if (prevLibraries.length === 0) {
+          return [library];
+        }
+        return [...prevLibraries, library];
+      });
+    };
+    window.electron.ipcRenderer.on('ipc-example', handleLibraryData);
+    return () => {
+      // window.electron.ipcRenderer.removeListener('ipc-example', handleLibraryData);
+    };
+  }, []);
 
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
       <Header />
-      <Sidebar onRecordClick={handleRecordClick} />
+      <Sidebar onRecordClick={handleRecordClick} libraries={libraries} />
       <ReferenceTable selectedRecord={selectedRecord} />
     </Box>
   );

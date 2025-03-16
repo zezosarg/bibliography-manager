@@ -1,16 +1,14 @@
 // BibTexReference class to represent an individual BibTeX entry
 export default class Reference {
-  entryType: string; // Type of BibTeX entry (e.g., article, book)
+  key?: string; // Unique key for the BibTeX entry
 
-  author: string;
+  entryType?: string; // Type of BibTeX entry (e.g., article, book)
 
-  title: string;
+  title?: string;
 
-  year: number;
+  author?: string;
 
   journal?: string;
-
-  publisher?: string;
 
   volume?: string;
 
@@ -18,26 +16,32 @@ export default class Reference {
 
   pages?: string;
 
+  year?: number;
+
+  publisher?: string;
+
   constructor(
-    entryType: string,
-    author: string,
-    title: string,
-    year: number,
+    key?: string,
+    entryType?: string,
+    title?: string,
+    author?: string,
     journal?: string,
-    publisher?: string,
     volume?: string,
     number?: string,
     pages?: string,
+    year?: number,
+    publisher?: string,
   ) {
+    this.key = key;
     this.entryType = entryType;
-    this.author = author;
     this.title = title;
-    this.year = year;
+    this.author = author;
     this.journal = journal;
-    this.publisher = publisher;
     this.volume = volume;
     this.number = number;
     this.pages = pages;
+    this.year = year;
+    this.publisher = publisher;
   }
 
   // Method to represent the BibTeX entry in a formatted way

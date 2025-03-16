@@ -6,7 +6,7 @@ function Header() {
     <AppBar position="fixed">
       <Toolbar>
         <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          My Application
+          Toolbar
         </Typography>
       </Toolbar>
     </AppBar>
