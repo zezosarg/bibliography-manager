@@ -32,7 +32,6 @@ export async function handleFilePick(mainWindow: BrowserWindow) {
       const bibFile = fs.readFileSync(filePath, 'utf8');
       const bibData = bibtexParse.entries(bibFile);
       // console.log(bibData);
-
       const library = new Library(filePath);
       bibData.forEach((entry: any) => {
         const reference = new Reference(
@@ -49,7 +48,6 @@ export async function handleFilePick(mainWindow: BrowserWindow) {
         );
         library.addReference(reference);
       });
-
       // console.log('mainWindow: ', mainWindow);
       mainWindow.webContents.send('ipc-example', library);
     } catch (error) {

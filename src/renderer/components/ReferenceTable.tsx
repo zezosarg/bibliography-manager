@@ -11,13 +11,6 @@ import {
 } from '@mui/material';
 import Library from '../../main/model/Library';
 
-const rows = [
-  { id: 1, name: 'John Doe', age: 28, profession: 'Engineer' },
-  { id: 2, name: 'Jane Smith', age: 34, profession: 'Designer' },
-  { id: 3, name: 'Alice Johnson', age: 25, profession: 'Developer' },
-  { id: 4, name: 'Bob Brown', age: 40, profession: 'Manager' },
-];
-
 interface ReferenceTableProps {
   selectedRecord: Library | null;
 }
