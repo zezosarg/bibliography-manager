@@ -1,9 +1,9 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   Drawer,
   List,
-  ListItem,
+  ListItemButton,
   ListItemText,
   Typography,
 } from '@mui/material';
@@ -15,6 +15,13 @@ interface SidebarProps {
 }
 
 function Sidebar({ onRecordClick, libraries }: SidebarProps) {
+  const [selectedItem, setSelectedItem] = useState<Library | null>(null);
+
+  const handleItemClick = (item: Library) => {
+    setSelectedItem(item);
+    onRecordClick(item);
+  };
+
   return (
     <Drawer
       variant="permanent"
@@ -35,16 +42,17 @@ function Sidebar({ onRecordClick, libraries }: SidebarProps) {
         </Typography>
         <List>
           {libraries.map((item) => (
-            <ListItem
+            <ListItemButton
               key={item.name}
               divider
-              onClick={() => onRecordClick(item)}
+              onClick={() => handleItemClick(item)}
+              selected={selectedItem === item}
             >
               <ListItemText
                 primary={item.name}
-                // secondary={`Age: ${item.age}, Job: ${item.job}`}
+                //  secondary={`Age: ${item.age}, Job: ${item.job}`}
               />
-            </ListItem>
+            </ListItemButton>
           ))}
         </List>
       </Box>
