@@ -48,7 +48,15 @@ function ReferenceTable({ selectedRecord }: ReferenceTableProps) {
             </TableHead>
             <TableBody>
               {selectedRecord.references.map((row) => (
-                <TableRow key={row.key}>
+                <TableRow
+                  key={row.key}
+                  sx={{
+                    '&:hover': {
+                      backgroundColor: 'rgba(0, 0, 0, 0.08)', // Light gray hover effect
+                      cursor: 'pointer', // Change cursor to pointer on hover
+                    },
+                  }}
+                >
                   <TableCell>{row.entryType}</TableCell>
                   <TableCell>{row.title}</TableCell>
                   <TableCell>{row.author}</TableCell>
