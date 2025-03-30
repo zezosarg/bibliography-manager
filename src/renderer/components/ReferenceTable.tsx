@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import {
   Box,
   TableContainer,
@@ -9,22 +9,61 @@ import {
   TableBody,
   Paper,
   Button,
+  DialogTitle,
+  DialogContent,
+  DialogActions,
+  TextField,
+  Dialog,
 } from '@mui/material';
 import Library from '../../main/model/Library';
+import Reference from '../../main/model/Reference';
 
 interface ReferenceTableProps {
-  selectedRecord: Library | null;
+  selectedLibrary: Library | null;
   onRemoveLibrary: (library: Library) => void; // Callback for deleting the library
 }
 
 function ReferenceTable({
-  selectedRecord,
+  selectedLibrary,
   onRemoveLibrary,
 }: ReferenceTableProps) {
+  const [open, setOpen] = useState(false);
+  const [selectedReference, setSelectedReference] = useState<Reference | null>(
+    null,
+  );
+
   const handleRemove = () => {
-    if (selectedRecord) {
-      onRemoveLibrary(selectedRecord);
+    if (selectedLibrary) {
+      onRemoveLibrary(selectedLibrary);
     }
+  };
+
+  const handleRowClick = (row: Reference) => {
+    const reference = new Reference(
+      row.key,
+      row.entryType,
+      row.title,
+      row.author,
+      row.journal,
+      row.volume,
+      row.number,
+      row.pages,
+      row.year,
+      row.publisher,
+    ); // to avoid 'TypeError selectedReference?.toBibTeXString is not a function'
+    setSelectedReference(reference);
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+    setSelectedReference(null);
+  };
+
+  const handleSave = () => {
+    // Logic to save the edited .bib content
+    // console.log('Saved .bib content:', bibContent);
+    handleClose();
   };
 
   return (
@@ -48,7 +87,7 @@ function ReferenceTable({
         }}
       >
         <h1>References</h1>
-        {selectedRecord && (
+        {selectedLibrary && (
           <Button
             variant="contained"
             color="error"
@@ -60,7 +99,7 @@ function ReferenceTable({
         )}
       </Box>
 
-      {selectedRecord ? (
+      {selectedLibrary ? (
         <TableContainer component={Paper}>
           <Table sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
@@ -77,7 +116,7 @@ function ReferenceTable({
               </TableRow>
             </TableHead>
             <TableBody>
-              {selectedRecord.references.map((row) => (
+              {selectedLibrary.references.map((row) => (
                 <TableRow
                   key={row.key}
                   sx={{
@@ -86,6 +125,7 @@ function ReferenceTable({
                       cursor: 'pointer', // Change cursor to pointer on hover
                     },
                   }}
+                  onClick={() => handleRowClick(row)}
                 >
                   <TableCell>{row.entryType}</TableCell>
                   <TableCell>{row.title}</TableCell>
@@ -104,6 +144,27 @@ function ReferenceTable({
       ) : (
         <p>Select a Library</p>
       )}
+
+      {/* Modal for editing the row */}
+      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
+        <DialogTitle>Edit Reference</DialogTitle>
+        <DialogContent>
+          <TextField
+            multiline
+            fullWidth
+            rows={15}
+            value={selectedReference?.toBibTeXString()}
+          />
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose} color="secondary">
+            Cancel
+          </Button>
+          <Button onClick={handleSave} variant="contained" color="primary">
+            Save
+          </Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   );
 }

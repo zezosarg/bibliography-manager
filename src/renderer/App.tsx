@@ -9,18 +9,18 @@ import Header from './components/Header';
 import Library from '../main/model/Library';
 
 function Home() {
-  const [selectedRecord, setSelectedRecord] = useState<Library | null>(null);
+  const [selectedLibrary, setSelectedLibrary] = useState<Library | null>(null);
   const [libraries, setLibraries] = useState<Library[]>([]);
 
   const handleRecordClick = (record: Library) => {
-    setSelectedRecord(record);
+    setSelectedLibrary(record);
   };
 
   const handleRemoveLibrary = (library: Library) => {
     setLibraries((prevLibraries) =>
       prevLibraries.filter((lib) => lib !== library),
     );
-    setSelectedRecord(null);
+    setSelectedLibrary(null);
   };
 
   useEffect(() => {
@@ -33,7 +33,7 @@ function Home() {
         }
         return [...prevLibraries, library];
       });
-      // setSelectedRecord(library); // Select the last library
+      // setSelectedLibrary(library); // Select the last library
     };
     window.electron.ipcRenderer.on('ipc-example', handleLibraryData);
     return () => {
@@ -47,7 +47,7 @@ function Home() {
       <Header />
       <Sidebar onRecordClick={handleRecordClick} libraries={libraries} />
       <ReferenceTable
-        selectedRecord={selectedRecord}
+        selectedLibrary={selectedLibrary}
         onRemoveLibrary={handleRemoveLibrary}
       />
     </Box>
