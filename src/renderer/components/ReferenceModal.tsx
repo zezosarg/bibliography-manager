@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import {
   Dialog,
   DialogTitle,
@@ -15,7 +15,7 @@ interface ReferenceModalProps {
   open: boolean;
   reference: Reference | null;
   onClose: () => void;
-  onSave: () => void;
+  onSave: (updatedReference: string) => void;
   onDelete: () => void;
 }
 
@@ -26,6 +26,21 @@ function ReferenceModal({
   onSave,
   onDelete,
 }: ReferenceModalProps) {
+  const [bibTeXString, setBibTeXString] = useState('');
+
+  useEffect(() => {
+    // Update the state when the reference prop changes
+    setBibTeXString(reference?.toBibTeXString() || '');
+  }, [reference]);
+
+  const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setBibTeXString(event.target.value);
+  };
+
+  const handleSave = () => {
+    onSave(bibTeXString);
+  };
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -52,14 +67,15 @@ function ReferenceModal({
           multiline
           fullWidth
           rows={15}
-          value={reference?.toBibTeXString() || ''}
+          value={bibTeXString}
+          onChange={handleInputChange}
         />
       </DialogContent>
       <DialogActions>
         <Button onClick={onClose} color="primary">
           Cancel
         </Button>
-        <Button onClick={onSave} variant="contained" color="primary">
+        <Button onClick={handleSave} variant="contained" color="primary">
           Save
         </Button>
       </DialogActions>
