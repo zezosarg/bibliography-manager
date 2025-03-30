@@ -9,14 +9,10 @@ import {
   TableBody,
   Paper,
   Button,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  TextField,
-  Dialog,
 } from '@mui/material';
 import Library from '../../main/model/Library';
 import Reference from '../../main/model/Reference';
+import ReferenceModal from './ReferenceModal';
 
 interface ReferenceTableProps {
   selectedLibrary: Library | null;
@@ -151,54 +147,13 @@ function ReferenceTable({
         <p>Select a Library</p>
       )}
 
-      {/* Modal for editing the row */}
-      <Dialog
+      <ReferenceModal
         open={openReferenceModal}
+        reference={selectedReference}
         onClose={handleCloseModal}
-        fullWidth
-        maxWidth="md"
-      >
-        {/* <DialogTitle>Edit Reference</DialogTitle> */}
-        <DialogTitle>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'space-between',
-              alignItems: 'center',
-            }}
-          >
-            <span>Edit Reference</span>
-            <Button
-              variant="contained"
-              color="error"
-              // startIcon={<DeleteIcon />}
-              onClick={handleDeleteReference}
-            >
-              Delete Reference
-            </Button>
-          </Box>
-        </DialogTitle>
-        <DialogContent>
-          <TextField
-            multiline
-            fullWidth
-            rows={15}
-            value={selectedReference?.toBibTeXString()}
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleCloseModal} color="primary">
-            Cancel
-          </Button>
-          <Button
-            onClick={handleSaveReference}
-            variant="contained"
-            color="primary"
-          >
-            Save
-          </Button>
-        </DialogActions>
-      </Dialog>
+        onSave={handleSaveReference}
+        onDelete={handleDeleteReference}
+      />
     </Box>
   );
 }
