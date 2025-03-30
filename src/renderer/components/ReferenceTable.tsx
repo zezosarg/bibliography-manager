@@ -27,12 +27,12 @@ function ReferenceTable({
   selectedLibrary,
   onRemoveLibrary,
 }: ReferenceTableProps) {
-  const [open, setOpen] = useState(false);
+  const [openReferenceModal, setOpenReferenceModal] = useState(false);
   const [selectedReference, setSelectedReference] = useState<Reference | null>(
     null,
   );
 
-  const handleRemove = () => {
+  const handleRemoveLibrary = () => {
     if (selectedLibrary) {
       onRemoveLibrary(selectedLibrary);
     }
@@ -52,18 +52,24 @@ function ReferenceTable({
       row.publisher,
     ); // to avoid 'TypeError selectedReference?.toBibTeXString is not a function'
     setSelectedReference(reference);
-    setOpen(true);
+    setOpenReferenceModal(true);
   };
 
-  const handleClose = () => {
-    setOpen(false);
+  const handleCloseModal = () => {
+    setOpenReferenceModal(false);
     setSelectedReference(null);
   };
 
-  const handleSave = () => {
+  const handleSaveReference = () => {
     // Logic to save the edited .bib content
     // console.log('Saved .bib content:', bibContent);
-    handleClose();
+    handleCloseModal();
+  };
+
+  const handleDeleteReference = () => {
+    // Logic to delete the reference
+    console.log('Deleted Reference:', selectedReference);
+    handleCloseModal();
   };
 
   return (
@@ -91,7 +97,7 @@ function ReferenceTable({
           <Button
             variant="contained"
             color="error"
-            onClick={handleRemove}
+            onClick={handleRemoveLibrary}
             sx={{ marginLeft: 'auto' }}
           >
             Remove Library
@@ -146,8 +152,32 @@ function ReferenceTable({
       )}
 
       {/* Modal for editing the row */}
-      <Dialog open={open} onClose={handleClose} fullWidth maxWidth="md">
-        <DialogTitle>Edit Reference</DialogTitle>
+      <Dialog
+        open={openReferenceModal}
+        onClose={handleCloseModal}
+        fullWidth
+        maxWidth="md"
+      >
+        {/* <DialogTitle>Edit Reference</DialogTitle> */}
+        <DialogTitle>
+          <Box
+            sx={{
+              display: 'flex',
+              justifyContent: 'space-between',
+              alignItems: 'center',
+            }}
+          >
+            <span>Edit Reference</span>
+            <Button
+              variant="contained"
+              color="error"
+              // startIcon={<DeleteIcon />}
+              onClick={handleDeleteReference}
+            >
+              Delete Reference
+            </Button>
+          </Box>
+        </DialogTitle>
         <DialogContent>
           <TextField
             multiline
@@ -157,10 +187,14 @@ function ReferenceTable({
           />
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleClose} color="secondary">
+          <Button onClick={handleCloseModal} color="primary">
             Cancel
           </Button>
-          <Button onClick={handleSave} variant="contained" color="primary">
+          <Button
+            onClick={handleSaveReference}
+            variant="contained"
+            color="primary"
+          >
             Save
           </Button>
         </DialogActions>
