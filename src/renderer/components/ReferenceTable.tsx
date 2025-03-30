@@ -8,14 +8,25 @@ import {
   TableCell,
   TableBody,
   Paper,
+  Button,
 } from '@mui/material';
 import Library from '../../main/model/Library';
 
 interface ReferenceTableProps {
   selectedRecord: Library | null;
+  onRemoveLibrary: (library: Library) => void; // Callback for deleting the library
 }
 
-function ReferenceTable({ selectedRecord }: ReferenceTableProps) {
+function ReferenceTable({
+  selectedRecord,
+  onRemoveLibrary,
+}: ReferenceTableProps) {
+  const handleRemove = () => {
+    if (selectedRecord) {
+      onRemoveLibrary(selectedRecord);
+    }
+  };
+
   return (
     <Box
       component="main"
@@ -28,7 +39,26 @@ function ReferenceTable({ selectedRecord }: ReferenceTableProps) {
         minHeight: '100vh',
       }}
     >
-      <h1>References</h1>
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'space-between', // Space between the title and the button
+          alignItems: 'center', // Align items vertically in the center
+          marginBottom: 2, // Add some spacing below the container
+        }}
+      >
+        <h1>References</h1>
+        {selectedRecord && (
+          <Button
+            variant="contained"
+            color="error"
+            onClick={handleRemove}
+            sx={{ marginLeft: 'auto' }}
+          >
+            Remove Library
+          </Button>
+        )}
+      </Box>
 
       {selectedRecord ? (
         <TableContainer component={Paper}>

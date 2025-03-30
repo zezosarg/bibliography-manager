@@ -16,6 +16,13 @@ function Home() {
     setSelectedRecord(record);
   };
 
+  const handleRemoveLibrary = (library: Library) => {
+    setLibraries((prevLibraries) =>
+      prevLibraries.filter((lib) => lib !== library),
+    );
+    setSelectedRecord(null);
+  };
+
   useEffect(() => {
     const handleLibraryData = (...args: unknown[]) => {
       const library = args[0] as Library;
@@ -26,6 +33,7 @@ function Home() {
         }
         return [...prevLibraries, library];
       });
+      // setSelectedRecord(library); // Select the last library
     };
     window.electron.ipcRenderer.on('ipc-example', handleLibraryData);
     return () => {
@@ -38,7 +46,10 @@ function Home() {
       <CssBaseline />
       <Header />
       <Sidebar onRecordClick={handleRecordClick} libraries={libraries} />
-      <ReferenceTable selectedRecord={selectedRecord} />
+      <ReferenceTable
+        selectedRecord={selectedRecord}
+        onRemoveLibrary={handleRemoveLibrary}
+      />
     </Box>
   );
 }
