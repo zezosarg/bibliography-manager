@@ -27,9 +27,7 @@ function Home() {
     try {
       window.electron.ipcRenderer.sendMessage('write-library', library);
       setLibraries((prevLibraries) =>
-        prevLibraries.map((lib) =>
-          lib.filePath === library.filePath ? library : lib,
-        ),
+        prevLibraries.map((lib) => (lib.name === library.name ? library : lib)),
       );
       setSelectedLibrary(library);
     } catch (error) {
