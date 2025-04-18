@@ -23,6 +23,21 @@ function Home() {
     setSelectedLibrary(null);
   };
 
+  const handleEditLibrary = (library: Library) => {
+    try {
+      window.electron.ipcRenderer.sendMessage('write-library', library);
+      setLibraries((prevLibraries) =>
+        prevLibraries.map((lib) =>
+          lib.filePath === library.filePath ? library : lib,
+        ),
+      );
+      setSelectedLibrary(library);
+    } catch (error) {
+      console.error('Failed to save library:', error);
+      throw error;
+    }
+  };
+
   useEffect(() => {
     const handleLibraryData = (...args: unknown[]) => {
       const library = args[0] as Library;
@@ -35,9 +50,9 @@ function Home() {
       });
       // setSelectedLibrary(library); // Select the last library
     };
-    window.electron.ipcRenderer.on('ipc-example', handleLibraryData);
+    window.electron.ipcRenderer.on('open-library', handleLibraryData);
     return () => {
-      // window.electron.ipcRenderer.removeListener('ipc-example', handleLibraryData);
+      // window.electron.ipcRenderer.removeListener('open-library', handleLibraryData);
     };
   }, []);
 
@@ -49,6 +64,7 @@ function Home() {
       <ReferenceTable
         selectedLibrary={selectedLibrary}
         onRemoveLibrary={handleRemoveLibrary}
+        onEditLibrary={handleEditLibrary}
       />
     </Box>
   );

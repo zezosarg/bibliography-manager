@@ -9,9 +9,9 @@ export default class Library {
 
   filePath: string;
 
-  constructor(filePath: string) {
+  constructor(filePath: string, references: Reference[] = []) {
     this.name = path.basename(filePath);
-    this.references = [];
+    this.references = references;
     this.filePath = filePath;
   }
 

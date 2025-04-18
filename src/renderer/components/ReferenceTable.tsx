@@ -16,12 +16,14 @@ import ReferenceModal from './ReferenceModal';
 
 interface ReferenceTableProps {
   selectedLibrary: Library | null;
-  onRemoveLibrary: (library: Library) => void; // Callback for deleting the library
+  onRemoveLibrary: (library: Library) => void;
+  onEditLibrary: (library: Library) => void;
 }
 
 function ReferenceTable({
   selectedLibrary,
   onRemoveLibrary,
+  onEditLibrary,
 }: ReferenceTableProps) {
   const [openReferenceModal, setOpenReferenceModal] = useState(false);
   const [selectedReference, setSelectedReference] = useState<Reference | null>(
@@ -35,18 +37,20 @@ function ReferenceTable({
   };
 
   const handleRowClick = (row: Reference) => {
-    const reference = new Reference(
-      row.key,
-      row.entryType,
-      row.title,
-      row.author,
-      row.journal,
-      row.volume,
-      row.number,
-      row.pages,
-      row.year,
-      row.publisher,
-    ); // to avoid 'TypeError selectedReference?.toBibTeXString is not a function'
+    // const reference = new Reference(
+    //   row.key,
+    //   row.entryType,
+    //   row.title,
+    //   row.author,
+    //   row.journal,
+    //   row.volume,
+    //   row.number,
+    //   row.pages,
+    //   row.year,
+    //   row.publisher,
+    // ); // to avoid 'TypeError selectedReference?.toBibTeXString is not a function'
+
+    const reference = Object.assign(new Reference(), row); // rehydrate the reference
     setSelectedReference(reference);
     setOpenReferenceModal(true);
   };
@@ -63,8 +67,16 @@ function ReferenceTable({
   };
 
   const handleDeleteReference = () => {
-    // Logic to delete the reference
-    console.log('Deleted Reference:', selectedReference);
+    if (selectedLibrary && selectedReference) {
+      const updatedReferences = selectedLibrary.references.filter(
+        (ref) => ref.key !== selectedReference?.key,
+      );
+      const updatedLibrary = new Library(
+        selectedLibrary.name,
+        updatedReferences,
+      );
+      onEditLibrary(updatedLibrary);
+    }
     handleCloseModal();
   };
 
