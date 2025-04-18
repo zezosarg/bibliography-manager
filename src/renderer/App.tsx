@@ -39,7 +39,6 @@ function Home() {
   useEffect(() => {
     const handleLibraryData = (...args: unknown[]) => {
       const library = args[0] as Library;
-      // console.log('Received data:', library);
       setLibraries((prevLibraries) => {
         if (prevLibraries.length === 0) {
           return [library];

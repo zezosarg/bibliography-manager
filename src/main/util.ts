@@ -6,8 +6,6 @@ import fs from 'fs';
 import Library from './model/Library';
 import Reference from './model/Reference';
 
-const bibtexParse = require('bibtex-parse');
-
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
     const port = process.env.PORT || 1212;
@@ -21,33 +19,14 @@ export function resolveHtmlPath(htmlFileName: string) {
 export async function handleFilePick(mainWindow: BrowserWindow) {
   const result = await dialog.showOpenDialog({
     properties: ['openFile'],
-    filters: [
-      // { name: 'All Files', extensions: ['*'] },
-      { name: 'Bib TeX Files', extensions: ['bib'] },
-    ],
+    filters: [{ name: 'Bib TeX Files', extensions: ['bib'] }],
   });
+
   if (!result.canceled && result.filePaths.length > 0) {
     const filePath = result.filePaths[0];
     try {
       const bibFile = fs.readFileSync(filePath, 'utf8');
-      const bibData = bibtexParse.entries(bibFile);
-      const library = new Library(filePath);
-      bibData.forEach((entry: any) => {
-        const reference = new Reference(
-          entry.key,
-          entry.type,
-          entry.TITLE,
-          entry.AUTHOR,
-          entry.JOURNAL,
-          entry.VOLUME,
-          entry.NUMBER,
-          entry.PAGES,
-          entry.YEAR,
-          entry.PUBLISHER,
-        );
-        // const reference = Object.assign(new Reference(), entry); // rehydrate the reference, doesn't work
-        library.addReference(reference);
-      });
+      const library = Library.parseBibTeXString(bibFile, filePath);
       mainWindow.webContents.send('open-library', library);
     } catch (error) {
       console.error('Error reading .bib file:', error);

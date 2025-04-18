@@ -37,19 +37,6 @@ function ReferenceTable({
   };
 
   const handleRowClick = (row: Reference) => {
-    // const reference = new Reference(
-    //   row.key,
-    //   row.entryType,
-    //   row.title,
-    //   row.author,
-    //   row.journal,
-    //   row.volume,
-    //   row.number,
-    //   row.pages,
-    //   row.year,
-    //   row.publisher,
-    // ); // to avoid 'TypeError selectedReference?.toBibTeXString is not a function'
-
     const reference = Object.assign(new Reference(), row); // rehydrate the reference
     setSelectedReference(reference);
     setOpenReferenceModal(true);
@@ -60,9 +47,17 @@ function ReferenceTable({
     setSelectedReference(null);
   };
 
-  const handleSaveReference = () => {
-    // Logic to save the edited .bib content
-    // console.log('Saved .bib content:', bibContent);
+  const handleSaveReference = (updatedReference: Reference) => {
+    if (selectedLibrary) {
+      const updatedReferences = selectedLibrary.references.map((ref) =>
+        ref.key === updatedReference.key ? updatedReference : ref,
+      );
+      const updatedLibrary = new Library(
+        selectedLibrary.name,
+        updatedReferences,
+      );
+      onEditLibrary(updatedLibrary);
+    }
     handleCloseModal();
   };
 

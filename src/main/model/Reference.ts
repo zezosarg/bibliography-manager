@@ -1,8 +1,10 @@
 // BibTexReference class to represent an individual BibTeX entry
+const bibtexParse = require('bibtex-parse');
+
 export default class Reference {
   key?: string; // Unique key for the BibTeX entry
 
-  entryType?: string; // Type of BibTeX entry (e.g., article, book)
+  entryType?: string;
 
   title?: string;
 
@@ -44,9 +46,8 @@ export default class Reference {
     this.publisher = publisher;
   }
 
-  // Method to represent the BibTeX entry in a formatted way
   toBibTeXString(): string {
-    let bibtex = `@${this.entryType}{\n`;
+    let bibtex = `@${this.entryType}{${this.key},\n`;
     bibtex += `  author = {${this.author}},\n`;
     bibtex += `  title = {${this.title}},\n`;
     bibtex += `  year = {${this.year}},\n`;
@@ -59,5 +60,25 @@ export default class Reference {
 
     bibtex += `}`;
     return bibtex;
+  }
+
+  static parseBibTeXString(bibFile: string): Reference {
+    const bibData = bibtexParse.entries(bibFile);
+    const entry = bibData[0];
+
+    const reference = Object.assign(new Reference(), {
+      key: entry.key,
+      entryType: entry.type,
+      title: entry.TITLE,
+      author: entry.AUTHOR,
+      journal: entry.JOURNAL,
+      volume: entry.VOLUME,
+      number: entry.NUMBER,
+      pages: entry.PAGES,
+      year: entry.YEAR,
+      publisher: entry.PUBLISHER,
+    });
+
+    return reference;
   }
 }

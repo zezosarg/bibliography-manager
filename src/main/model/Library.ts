@@ -2,6 +2,8 @@
 import path from 'path';
 import Reference from './Reference';
 
+const bibtexParse = require('bibtex-parse');
+
 export default class Library {
   name: string;
 
@@ -37,5 +39,28 @@ export default class Library {
   // List all references in BibTeX format
   listReferences(): string {
     return this.references.map((ref) => ref.toBibTeXString()).join('\n\n');
+  }
+
+  static parseBibTeXString(bibFile: string, filePath: string): Library {
+    const bibData = bibtexParse.entries(bibFile);
+    const library = new Library(filePath);
+
+    bibData.forEach((entry: any) => {
+      const reference = Object.assign(new Reference(), {
+        key: entry.key,
+        entryType: entry.type,
+        title: entry.TITLE,
+        author: entry.AUTHOR,
+        journal: entry.JOURNAL,
+        volume: entry.VOLUME,
+        number: entry.NUMBER,
+        pages: entry.PAGES,
+        year: entry.YEAR,
+        publisher: entry.PUBLISHER,
+      });
+      library.addReference(reference);
+    });
+
+    return library;
   }
 }

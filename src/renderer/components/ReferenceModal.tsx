@@ -15,7 +15,7 @@ interface ReferenceModalProps {
   open: boolean;
   reference: Reference | null;
   onClose: () => void;
-  onSave: (updatedReference: string) => void;
+  onSave: (updatedReference: Reference) => void;
   onDelete: () => void;
 }
 
@@ -38,7 +38,10 @@ function ReferenceModal({
   };
 
   const handleSave = () => {
-    onSave(bibTeXString);
+    if (reference) {
+      const updatedReference = Reference.parseBibTeXString(bibTeXString);
+      onSave(updatedReference);
+    }
   };
 
   return (
