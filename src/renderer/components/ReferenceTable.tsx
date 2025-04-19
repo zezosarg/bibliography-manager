@@ -48,7 +48,16 @@ function ReferenceTable({
   };
 
   const handleSaveReference = (updatedReference: Reference) => {
+    if (updatedReference.key === 'unauthoredundateduntitled') {
+      updatedReference.key = updatedReference.generateKey();
+    }
     if (selectedLibrary) {
+      const referenceExists = selectedLibrary.references.some(
+        (ref) => ref.key === updatedReference.key,
+      );
+      if (!referenceExists) {
+        selectedLibrary.references.push(updatedReference);
+      }
       const updatedReferences = selectedLibrary.references.map((ref) =>
         ref.key === updatedReference.key ? updatedReference : ref,
       );
@@ -62,7 +71,7 @@ function ReferenceTable({
   };
 
   const handleDeleteReference = () => {
-    if (selectedLibrary && selectedReference) {
+    if (selectedLibrary) {
       const updatedReferences = selectedLibrary.references.filter(
         (ref) => ref.key !== selectedReference?.key,
       );
@@ -73,6 +82,12 @@ function ReferenceTable({
       onEditLibrary(updatedLibrary);
     }
     handleCloseModal();
+  };
+
+  const handleAddReference = () => {
+    const newReference = new Reference();
+    setSelectedReference(newReference);
+    setOpenReferenceModal(true);
   };
 
   return (
@@ -97,14 +112,23 @@ function ReferenceTable({
       >
         <h1>References</h1>
         {selectedLibrary && (
-          <Button
-            variant="contained"
-            color="error"
-            onClick={handleRemoveLibrary}
-            sx={{ marginLeft: 'auto' }}
-          >
-            Remove Library
-          </Button>
+          <Box sx={{ display: 'flex', gap: 2 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleAddReference} // Open modal for adding a reference
+            >
+              Add Reference
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              onClick={handleRemoveLibrary}
+              sx={{ marginLeft: 'auto' }}
+            >
+              Remove Library
+            </Button>
+          </Box>
         )}
       </Box>
 

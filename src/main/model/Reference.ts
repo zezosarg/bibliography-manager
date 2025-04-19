@@ -34,7 +34,7 @@ export default class Reference {
     year?: number,
     publisher?: string,
   ) {
-    this.key = key;
+    this.key = key || this.generateKey();
     this.entryType = entryType;
     this.title = title;
     this.author = author;
@@ -44,6 +44,14 @@ export default class Reference {
     this.pages = pages;
     this.year = year;
     this.publisher = publisher;
+  }
+
+  generateKey(): string {
+    const authorLastName =
+      this.author?.split(',')[0]?.trim().toLowerCase() || 'unauthored';
+    const yearPart = this.year?.toString() || 'undated';
+    const titlePart = this.title?.split(' ')[0]?.toLowerCase() || 'untitled';
+    return `${authorLastName}${yearPart}${titlePart}`;
   }
 
   toBibTeXString(): string {
