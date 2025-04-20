@@ -36,17 +36,18 @@ function Home() {
     }
   };
 
+  const handleLibraryData = (...args: unknown[]) => {
+    const library = args[0] as Library;
+    setLibraries((prevLibraries) => {
+      if (prevLibraries.length === 0) {
+        return [library];
+      }
+      return [...prevLibraries, library];
+    });
+    // setSelectedLibrary(library); // Select the last library
+  };
+
   useEffect(() => {
-    const handleLibraryData = (...args: unknown[]) => {
-      const library = args[0] as Library;
-      setLibraries((prevLibraries) => {
-        if (prevLibraries.length === 0) {
-          return [library];
-        }
-        return [...prevLibraries, library];
-      });
-      // setSelectedLibrary(library); // Select the last library
-    };
     window.electron.ipcRenderer.on('open-library', handleLibraryData);
     return () => {
       // window.electron.ipcRenderer.removeListener('open-library', handleLibraryData);

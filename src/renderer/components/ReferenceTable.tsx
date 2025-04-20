@@ -96,7 +96,7 @@ function ReferenceTable({
       sx={{
         flexGrow: 1,
         bgcolor: 'background.default',
-        p: 3,
+        p: 2,
         marginLeft: 0, // Adjust the content to be next to the sidebar
         marginTop: 5, // Offset for the top bar height
         minHeight: '100vh',
@@ -107,10 +107,10 @@ function ReferenceTable({
           display: 'flex',
           justifyContent: 'space-between', // Space between the title and the button
           alignItems: 'center', // Align items vertically in the center
-          marginBottom: 2, // Add some spacing below the container
+          marginBottom: 0, // Add some spacing below the container
         }}
       >
-        <h1>References</h1>
+        <h2>References</h2>
         {selectedLibrary && (
           <Box sx={{ display: 'flex', gap: 2 }}>
             <Button
@@ -133,8 +133,14 @@ function ReferenceTable({
       </Box>
 
       {selectedLibrary ? (
-        <TableContainer component={Paper}>
-          <Table sx={{ minWidth: 650 }} aria-label="simple table">
+        <TableContainer
+          component={Paper}
+          sx={{
+            maxHeight: '80vh', // Set a maximum height for the table container
+            overflowY: 'auto', // Enable vertical scrolling
+          }}
+        >
+          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
                 <TableCell>Type</TableCell>

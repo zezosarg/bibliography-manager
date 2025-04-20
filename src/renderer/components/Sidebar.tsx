@@ -6,6 +6,7 @@ import {
   ListItemButton,
   ListItemText,
   Typography,
+  // Divider,
 } from '@mui/material';
 import Library from '../../main/model/Library';
 
@@ -26,20 +27,33 @@ function Sidebar({ onRecordClick, libraries }: SidebarProps) {
     <Drawer
       variant="permanent"
       sx={{
-        width: 240,
+        width: 200,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: 240,
+          width: 200,
           boxSizing: 'border-box',
           // position: 'relative',
           top: '64px', // Offset to place below the top bar (height of the AppBar)
         },
       }}
     >
-      <Box sx={{ padding: 1 }}>
-        <Typography variant="h6" component="div" sx={{ marginTop: 1 }}>
-          Libraries
-        </Typography>
+      <Box>
+        <Box
+          sx={{
+            display: 'flex',
+            // justifyContent: 'center', // 'space-between',
+            alignItems: 'center',
+            margin: 1,
+          }}
+        >
+          <Typography variant="h6" component="div" sx={{ fontWeight: 'bold' }}>
+            Libraries
+          </Typography>
+          {/* <Button variant="contained" size="small">
+            Add Library
+          </Button> */}
+        </Box>
+        {/* <Divider /> */}
         <List>
           {libraries.map((item) => (
             <ListItemButton
