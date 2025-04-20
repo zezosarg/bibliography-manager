@@ -6,7 +6,7 @@ import {
   MenuItemConstructorOptions,
 } from 'electron';
 
-import { handleFilePick } from './util';
+import { handleFilePick, handleNewFile } from './util';
 
 interface DarwinMenuItemConstructorOptions extends MenuItemConstructorOptions {
   selector?: string;
@@ -204,6 +204,13 @@ export default class MenuBuilder {
             accelerator: 'Ctrl+O',
             click: () => {
               handleFilePick(this.mainWindow);
+            },
+          },
+          {
+            label: '&New Library',
+            accelerator: 'Ctrl+N',
+            click: () => {
+              handleNewFile(this.mainWindow);
             },
           },
           {

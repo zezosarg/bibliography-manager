@@ -46,3 +46,22 @@ export async function writeLibrary(lib: Library) {
     console.error('Error saving library:', error);
   }
 }
+
+export async function handleNewFile(mainWindow: BrowserWindow) {
+  const result = await dialog.showSaveDialog({
+    title: 'Create New Library',
+    defaultPath: 'NewLibrary.bib', // Default file name
+    filters: [{ name: 'BibTeX Files', extensions: ['bib'] }],
+  });
+
+  if (!result.canceled && result.filePath) {
+    const { filePath } = result;
+    try {
+      fs.writeFileSync(filePath, '', 'utf8');
+      const library = new Library(filePath);
+      mainWindow.webContents.send('open-library', library);
+    } catch (error) {
+      console.error('Error creating new library file:', error);
+    }
+  }
+}
