@@ -11,6 +11,7 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  Typography,
 } from '@mui/material';
 
 interface HeaderProps {
@@ -42,22 +43,22 @@ function Header({ onSearch }: HeaderProps) {
             size="small"
             sx={{
               minWidth: 150,
-              backgroundColor: 'white', // Set background color to white
-              borderRadius: 1, // Optional: Add rounded corners
-              '& .MuiOutlinedInput-root': {
-                backgroundColor: 'white', // Ensure the dropdown itself has a white background
-              },
+              // backgroundColor: 'white', // Set background color to white
+              // borderRadius: 1, // Optional: Add rounded corners
+              // '& .MuiOutlinedInput-root': {
+              //   backgroundColor: 'white', // Ensure the dropdown itself has a white background
+              // },
             }}
           >
-            {/* <InputLabel>Search Field</InputLabel> */}
+            <InputLabel>Search Field</InputLabel>
             <Select
               value={searchField}
               onChange={handleSearchFieldChange}
-              // label="Search Field"
+              label="Search Field"
             >
-              <MenuItem value="" disabled>
+              {/* <MenuItem value="" disabled>
                 Select Field
-              </MenuItem>
+              </MenuItem> */}
               <MenuItem value="all">All</MenuItem>
               <MenuItem value="author">Author</MenuItem>
               <MenuItem value="year">Year</MenuItem>
@@ -73,8 +74,7 @@ function Header({ onSearch }: HeaderProps) {
             onChange={handleSearchChange}
             sx={{ backgroundColor: 'white', borderRadius: 1 }}
           />
-          {/* <Button color="inherit">Create Library</Button>
-          <Button color="inherit">Sign Up</Button> */}
+          <Button color="inherit">Find Duplicates</Button>
         </Box>
       </Toolbar>
     </AppBar>
