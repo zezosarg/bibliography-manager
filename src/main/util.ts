@@ -19,14 +19,22 @@ export function resolveHtmlPath(htmlFileName: string) {
 export async function handleFilePick(mainWindow: BrowserWindow) {
   const result = await dialog.showOpenDialog({
     properties: ['openFile'],
-    filters: [{ name: 'Bib TeX Files', extensions: ['bib'] }],
+    filters: [
+      { name: 'Bib TeX Files', extensions: ['bib'] },
+      { name: 'Research Information Systems', extensions: ['ris'] },
+    ],
   });
 
   if (!result.canceled && result.filePaths.length > 0) {
     const filePath = result.filePaths[0];
     try {
       const bibFile = fs.readFileSync(filePath, 'utf8');
-      const library = Library.parseBibTeXString(bibFile, filePath);
+      const library = Library.parseString(bibFile, filePath);
+      if (path.extname(filePath).toLowerCase() === '.ris') {
+        const bibFilePath = filePath.replace(/\.ris$/, '.bib');
+        fs.writeFileSync(bibFilePath, library.listReferences(), 'utf8');
+        library.filePath = bibFilePath;
+      }
       mainWindow.webContents.send('open-library', library);
     } catch (error) {
       console.error('Error reading .bib file:', error);

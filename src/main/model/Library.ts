@@ -11,18 +11,18 @@ export default class Library {
 
   filePath: string;
 
+  // linkedFilePath: string | null = null;
+
   constructor(filePath: string, references: Reference[] = []) {
     this.name = path.basename(filePath);
     this.references = references;
     this.filePath = filePath;
   }
 
-  // Add a new BibTeX reference to the library
   addReference(reference: Reference): void {
     this.references.push(reference);
   }
 
-  // Remove a reference from the library by its index
   removeReference(index: number): void {
     if (index >= 0 && index < this.references.length) {
       this.references.splice(index, 1);
@@ -31,20 +31,29 @@ export default class Library {
     }
   }
 
-  // Retrieve a reference by its index
   getReference(index: number): Reference | undefined {
     return this.references[index];
   }
 
-  // List all references in BibTeX format
   listReferences(): string {
     return this.references.map((ref) => ref.toBibTeXString()).join('\n\n');
+  }
+
+  static parseString(fileContent: string, filePath: string): Library {
+    const fileExtension = path.extname(filePath).toLowerCase();
+
+    if (fileExtension === '.bib') {
+      return Library.parseBibTeXString(fileContent, filePath);
+    }
+    if (fileExtension === '.ris') {
+      return Library.parseRisString(fileContent, filePath);
+    }
+    throw new Error(`Unsupported file format: ${fileExtension}`);
   }
 
   static parseBibTeXString(bibFile: string, filePath: string): Library {
     const bibData = bibtexParse.entries(bibFile);
     const library = new Library(filePath);
-
     bibData.forEach((entry: any) => {
       const reference = Object.assign(new Reference(), {
         key: entry.key,
@@ -61,6 +70,47 @@ export default class Library {
       library.addReference(reference);
     });
 
+    return library;
+  }
+
+  static parseRisString(risFile: string, filePath: string): Library {
+    const lines = risFile.split(/\r?\n/);
+    const library = new Library(filePath);
+    let currentEntry: any = {};
+    lines.forEach((line) => {
+      const match = line.match(/^([A-Z0-9]{2}) {2}- (.+)$/);
+      if (match) {
+        const [_, key, value] = match;
+        if (key === 'TY') {
+          // Start of a new entry
+          currentEntry = { entryType: value };
+        } else if (key === 'A1') {
+          // Handle multiple authors
+          if (!currentEntry[key]) {
+            currentEntry[key] = [];
+          }
+          currentEntry[key].push(value);
+        } else {
+          currentEntry[key] = value;
+        }
+      } else if (line.startsWith('ER')) {
+        // End of the current entry
+        const reference = Object.assign(new Reference(), {
+          // key: currentEntry.ID || undefined,
+          entryType: currentEntry.entryType,
+          title: currentEntry.T1,
+          author: currentEntry.A1 ? currentEntry.A1.join(', ') : '',
+          journal: currentEntry.JO,
+          volume: currentEntry.VL,
+          number: currentEntry.IS,
+          pages: currentEntry.SP,
+          year: currentEntry.Y1 || currentEntry.PY,
+          publisher: currentEntry.PB,
+        });
+        library.addReference(reference);
+        currentEntry = {};
+      }
+    });
     return library;
   }
 }
