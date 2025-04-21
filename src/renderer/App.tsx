@@ -36,6 +36,43 @@ function Home() {
     }
   };
 
+  const handleSearch = (query: string, searchField: string) => {
+    if (!query) {
+      return;
+    }
+    const lowerCaseQuery = query.toLowerCase();
+    const allRefs = libraries.flatMap((library) => library.references);
+    const filteredRefs = allRefs.filter(
+      (ref) =>
+        (ref.title?.toLowerCase().includes(lowerCaseQuery) &&
+          (searchField === 'all' || searchField === 'title')) ||
+        (ref.author?.toLowerCase().includes(lowerCaseQuery) &&
+          (searchField === 'all' || searchField === 'author')) ||
+        (ref.journal?.toLowerCase().includes(lowerCaseQuery) &&
+          (searchField === 'all' || searchField === 'journal')) ||
+        (ref.year?.toString().includes(lowerCaseQuery) &&
+          (searchField === 'all' || searchField === 'year')) ||
+        (ref.volume?.toString().includes(lowerCaseQuery) &&
+          (searchField === 'all' || searchField === 'volume')) ||
+        (ref.number?.toString().includes(lowerCaseQuery) &&
+          (searchField === 'all' || searchField === 'number')) ||
+        (ref.pages?.toString().includes(lowerCaseQuery) &&
+          (searchField === 'all' || searchField === 'pages')) ||
+        (ref.publisher?.toLowerCase().includes(lowerCaseQuery) &&
+          (searchField === 'all' || searchField === 'publisher')) ||
+        (ref.key?.toLowerCase().includes(lowerCaseQuery) &&
+          (searchField === 'all' || searchField === 'key')),
+    );
+    if (filteredRefs.length === 0) {
+      console.log('No results found');
+      return;
+    }
+    const filteredLibrary = new Library('Search Results', filteredRefs);
+    setSelectedLibrary(filteredLibrary);
+
+    // clearSidebarSelection();
+  };
+
   const handleLibraryData = (...args: unknown[]) => {
     const library = args[0] as Library;
     setLibraries((prevLibraries) => {
@@ -57,8 +94,12 @@ function Home() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <Header />
-      <Sidebar onRecordClick={handleRecordClick} libraries={libraries} />
+      <Header onSearch={handleSearch} />
+      <Sidebar
+        onRecordClick={handleRecordClick}
+        libraries={libraries}
+        // onClearSelection={clearSidebarSelection}
+      />
       <ReferenceTable
         selectedLibrary={selectedLibrary}
         onRemoveLibrary={handleRemoveLibrary}
