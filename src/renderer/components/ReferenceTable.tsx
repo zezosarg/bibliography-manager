@@ -90,6 +90,19 @@ function ReferenceTable({
     setOpenReferenceModal(true);
   };
 
+  // const handleLinkFile = (event, bibliographyId) => {
+  //   event.preventDefault();
+  //   const file = event.dataTransfer.files[0];
+  //   if (file && file.type === 'application/pdf') {
+  //     // // For simplicity in this example, we're directly using the path.
+  //     // // In a more complex scenario, you might want to copy the file.
+  //     // ipcRenderer.send('pdf-file-selected', bibliographyId, file.path);
+  //   } else {
+  //     // Handle invalid file type
+  //     console.warn('Invalid file type. Please drop a PDF file.');
+  //   }
+  // };
+
   return (
     <Box
       component="main"
@@ -128,6 +141,14 @@ function ReferenceTable({
             >
               Remove Library
             </Button>
+            {/* <Button
+              variant="contained"
+              color="secondary"
+              onClick={handleLinkFile}
+              sx={{ marginLeft: 'auto' }}
+            >
+              Link File
+            </Button> */}
           </Box>
         )}
       </Box>
