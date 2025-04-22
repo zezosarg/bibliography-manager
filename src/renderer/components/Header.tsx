@@ -20,7 +20,7 @@ interface HeaderProps {
 
 function Header({ onSearch }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
-  const [searchField, setSearchField] = useState('');
+  const [searchField, setSearchField] = useState('all');
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;

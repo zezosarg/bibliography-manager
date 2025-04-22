@@ -202,7 +202,7 @@ function ReferenceTable({
           </Table>
         </TableContainer>
       ) : (
-        <p>Select a Library</p>
+        <p>Please select a Library</p>
       )}
 
       <ReferenceModal
