@@ -12,8 +12,11 @@ import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import MenuBuilder from './menu';
+import fs from 'fs';
+import os from 'os';
 import { resolveHtmlPath, writeLibrary } from './util';
+import MenuBuilder from './menu';
+import Library from './model/Library';
 
 class AppUpdater {
   constructor() {
@@ -115,6 +118,27 @@ const createWindow = async () => {
   // eslint-disable-next-line
   new AppUpdater();
 };
+
+ipcMain.handle('load-libraries', async () => {
+  const filePath = path.join(os.homedir(), 'bibliographyManager.json');
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify({ paths: [] }, null, 2), 'utf-8');
+    return []; // Return an empty array if the file doesn't exist
+  }
+
+  const data = fs.readFileSync(filePath, 'utf-8');
+  const { paths } = JSON.parse(data);
+
+  const libraries = paths.map((libraryPath: string) => {
+    if (fs.existsSync(libraryPath)) {
+      const libraryData = fs.readFileSync(libraryPath, 'utf-8');
+      return Library.parseString(libraryData, libraryPath);
+    }
+    return null;
+  });
+
+  return libraries.filter((library: Library) => library !== null); // Filter out invalid paths
+});
 
 /**
  * Add event listeners...

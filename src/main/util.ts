@@ -3,6 +3,7 @@ import { URL } from 'url';
 import path from 'path';
 import { dialog, BrowserWindow } from 'electron';
 import fs from 'fs';
+import os from 'os';
 import Library from './model/Library';
 import Reference from './model/Reference';
 
@@ -14,6 +15,21 @@ export function resolveHtmlPath(htmlFileName: string) {
     return url.href;
   }
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
+}
+
+export async function updatePathsFile(library: Library) {
+  const pathsFilePath = path.join(os.homedir(), 'bibliographyManager.json');
+  let pathsData: { paths: string[] } = { paths: [] };
+
+  if (fs.existsSync(pathsFilePath)) {
+    const fileContent = fs.readFileSync(pathsFilePath, 'utf8');
+    pathsData = JSON.parse(fileContent);
+  }
+
+  if (!pathsData.paths.includes(library.filePath)) {
+    pathsData.paths.push(library.filePath);
+    fs.writeFileSync(pathsFilePath, JSON.stringify(pathsData, null, 2), 'utf8');
+  }
 }
 
 export async function handleFilePick(mainWindow: BrowserWindow) {
@@ -35,6 +51,7 @@ export async function handleFilePick(mainWindow: BrowserWindow) {
         fs.writeFileSync(bibFilePath, library.listReferences(), 'utf8');
         library.filePath = bibFilePath;
       }
+      updatePathsFile(library);
       mainWindow.webContents.send('open-library', library);
     } catch (error) {
       console.error('Error reading .bib file:', error);
@@ -67,6 +84,7 @@ export async function handleNewFile(mainWindow: BrowserWindow) {
     try {
       fs.writeFileSync(filePath, '', 'utf8');
       const library = new Library(filePath);
+      updatePathsFile(library);
       mainWindow.webContents.send('open-library', library);
     } catch (error) {
       console.error('Error creating new library file:', error);

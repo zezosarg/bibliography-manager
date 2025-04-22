@@ -84,7 +84,18 @@ function Home() {
     // setSelectedLibrary(library); // Select the last library
   };
 
+  const loadLibraries = async () => {
+    try {
+      const loadedLibraries =
+        await window.electron.ipcRenderer.invoke('load-libraries');
+      setLibraries(loadedLibraries);
+    } catch (error) {
+      console.error('Failed to load libraries:', error);
+    }
+  };
+
   useEffect(() => {
+    loadLibraries();
     window.electron.ipcRenderer.on('open-library', handleLibraryData);
     return () => {
       // window.electron.ipcRenderer.removeListener('open-library', handleLibraryData);
