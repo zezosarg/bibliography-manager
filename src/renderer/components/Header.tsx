@@ -69,7 +69,7 @@ function Header({ onSearch }: HeaderProps) {
           <TextField
             variant="outlined"
             size="small"
-            placeholder="Search References..."
+            placeholder="Search All References..."
             value={searchQuery}
             onChange={handleSearchChange}
             sx={{ backgroundColor: 'white', borderRadius: 1 }}

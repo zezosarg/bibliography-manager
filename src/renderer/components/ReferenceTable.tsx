@@ -124,7 +124,7 @@ function ReferenceTable({
               color="primary"
               onClick={handleAddReference} // Open modal for adding a reference
             >
-              Add Reference
+              New Reference
             </Button>
             <Button
               variant="contained"
