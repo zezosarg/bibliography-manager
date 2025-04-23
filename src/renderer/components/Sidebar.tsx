@@ -27,10 +27,10 @@ function Sidebar({ onRecordClick, libraries }: SidebarProps) {
     <Drawer
       variant="permanent"
       sx={{
-        width: 200,
+        width: 150,
         flexShrink: 0,
         '& .MuiDrawer-paper': {
-          width: 200,
+          width: 150,
           boxSizing: 'border-box',
           // position: 'relative',
           top: '64px', // Offset to place below the top bar (height of the AppBar)

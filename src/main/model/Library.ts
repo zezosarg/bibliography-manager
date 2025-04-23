@@ -11,28 +11,10 @@ export default class Library {
 
   filePath: string;
 
-  // linkedFilePath: string | null = null;
-
   constructor(filePath: string, references: Reference[] = []) {
     this.name = path.basename(filePath);
     this.references = references;
     this.filePath = filePath;
-  }
-
-  addReference(reference: Reference): void {
-    this.references.push(reference);
-  }
-
-  removeReference(index: number): void {
-    if (index >= 0 && index < this.references.length) {
-      this.references.splice(index, 1);
-    } else {
-      console.error('Reference not found.');
-    }
-  }
-
-  getReference(index: number): Reference | undefined {
-    return this.references[index];
   }
 
   listReferences(): string {
@@ -66,8 +48,9 @@ export default class Library {
         pages: entry.PAGES,
         year: entry.YEAR,
         publisher: entry.PUBLISHER,
+        linkedFilePath: entry.FILE,
       });
-      library.addReference(reference);
+      library.references.push(reference);
     });
 
     return library;
@@ -107,7 +90,7 @@ export default class Library {
           year: currentEntry.Y1 || currentEntry.PY,
           publisher: currentEntry.PB,
         });
-        library.addReference(reference);
+        library.references.push(reference);
         currentEntry = {};
       }
     });

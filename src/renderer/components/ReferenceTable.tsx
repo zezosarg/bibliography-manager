@@ -62,7 +62,7 @@ function ReferenceTable({
         ref.key === updatedReference.key ? updatedReference : ref,
       );
       const updatedLibrary = new Library(
-        selectedLibrary.name,
+        selectedLibrary.filePath,
         updatedReferences,
       );
       onEditLibrary(updatedLibrary);
@@ -76,7 +76,7 @@ function ReferenceTable({
         (ref) => ref.key !== selectedReference?.key,
       );
       const updatedLibrary = new Library(
-        selectedLibrary.name,
+        selectedLibrary.filePath,
         updatedReferences,
       );
       onEditLibrary(updatedLibrary);
@@ -90,18 +90,11 @@ function ReferenceTable({
     setOpenReferenceModal(true);
   };
 
-  // const handleLinkFile = (event, bibliographyId) => {
-  //   event.preventDefault();
-  //   const file = event.dataTransfer.files[0];
-  //   if (file && file.type === 'application/pdf') {
-  //     // // For simplicity in this example, we're directly using the path.
-  //     // // In a more complex scenario, you might want to copy the file.
-  //     // ipcRenderer.send('pdf-file-selected', bibliographyId, file.path);
-  //   } else {
-  //     // Handle invalid file type
-  //     console.warn('Invalid file type. Please drop a PDF file.');
-  //   }
-  // };
+  const handleOpenFile = (filePath: string | undefined) => {
+    if (filePath) {
+      window.electron.ipcRenderer.sendMessage('open-file', filePath);
+    }
+  };
 
   return (
     <Box
@@ -125,7 +118,7 @@ function ReferenceTable({
       >
         <h2>References</h2>
         {selectedLibrary && (
-          <Box sx={{ display: 'flex', gap: 2 }}>
+          <Box sx={{ display: 'flex', gap: 1 }}>
             <Button
               variant="contained"
               color="primary"
@@ -173,6 +166,7 @@ function ReferenceTable({
                 <TableCell>Pages</TableCell>
                 <TableCell>Year</TableCell>
                 <TableCell>Publisher</TableCell>
+                <TableCell>File</TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -196,6 +190,22 @@ function ReferenceTable({
                   <TableCell>{row.pages}</TableCell>
                   <TableCell>{row.year}</TableCell>
                   <TableCell>{row.publisher}</TableCell>
+                  <TableCell>
+                    {row.linkedFilePath ? (
+                      <Button
+                        variant="text"
+                        color="primary"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering row click
+                          handleOpenFile(row.linkedFilePath);
+                        }}
+                      >
+                        {row.linkedFilePath.split('.').pop()}{' '}
+                      </Button>
+                    ) : (
+                      'N/A'
+                    )}
+                  </TableCell>
                 </TableRow>
               ))}
             </TableBody>

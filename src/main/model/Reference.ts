@@ -22,6 +22,8 @@ export default class Reference {
 
   publisher?: string;
 
+  linkedFilePath?: string;
+
   constructor(
     key?: string,
     entryType?: string,
@@ -33,6 +35,7 @@ export default class Reference {
     pages?: string,
     year?: number,
     publisher?: string,
+    linkedFilePath?: string,
   ) {
     this.key = key || this.generateKey();
     this.entryType = entryType;
@@ -44,6 +47,7 @@ export default class Reference {
     this.pages = pages;
     this.year = year;
     this.publisher = publisher;
+    this.linkedFilePath = linkedFilePath;
   }
 
   generateKey(): string {
@@ -65,6 +69,7 @@ export default class Reference {
     if (this.volume) bibtex += `  volume = {${this.volume}},\n`;
     if (this.number) bibtex += `  number = {${this.number}},\n`;
     if (this.pages) bibtex += `  pages = {${this.pages}},\n`;
+    if (this.linkedFilePath) bibtex += `  file = {${this.linkedFilePath}},\n`;
 
     bibtex += `}`;
     return bibtex;
@@ -85,6 +90,7 @@ export default class Reference {
       pages: entry.PAGES,
       year: entry.YEAR,
       publisher: entry.PUBLISHER,
+      linkedFilePath: entry.FILE,
     });
 
     return reference;

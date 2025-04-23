@@ -44,6 +44,19 @@ function ReferenceModal({
     }
   };
 
+  const handleLinkFile = async () => {
+    if (!reference) return;
+
+    const { filePaths, canceled } =
+      await window.electron.ipcRenderer.invoke('open-file-dialog');
+
+    if (!canceled && filePaths.length > 0) {
+      const linkedFilePath = filePaths[0];
+      reference.linkedFilePath = linkedFilePath;
+      onSave(reference);
+    }
+  };
+
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
       <DialogTitle>
@@ -55,14 +68,24 @@ function ReferenceModal({
           }}
         >
           <span>Edit Reference</span>
-          <Button
-            variant="contained"
-            color="error"
-            // startIcon={<DeleteIcon />}
-            onClick={onDelete}
-          >
-            Delete Reference
-          </Button>
+          <Box sx={{ display: 'flex', gap: 1 }}>
+            <Button
+              variant="contained"
+              color="primary"
+              // startIcon={<DeleteIcon />}
+              onClick={handleLinkFile}
+            >
+              Add Link
+            </Button>
+            <Button
+              variant="contained"
+              color="error"
+              // startIcon={<DeleteIcon />}
+              onClick={onDelete}
+            >
+              Delete Reference
+            </Button>
+          </Box>
         </Box>
       </DialogTitle>
       <DialogContent>

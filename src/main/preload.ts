@@ -6,7 +6,9 @@ export type Channels =
   | 'ipc-example'
   | 'open-library'
   | 'write-library'
-  | 'load-libraries';
+  | 'load-libraries'
+  | 'open-file-dialog'
+  | 'open-file';
 
 const electronHandler = {
   ipcRenderer: {
