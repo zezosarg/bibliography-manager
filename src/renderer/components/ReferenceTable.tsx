@@ -29,6 +29,14 @@ function ReferenceTable({
   const [selectedReference, setSelectedReference] = useState<Reference | null>(
     null,
   );
+  const [showAddReferencesMessage, setShowAddReferencesMessage] =
+    useState(false);
+  const [libraryToAddRefs, setLibraryToAddRefs] = useState<Library | null>(
+    null,
+  );
+  const [selectedReferences, setSelectedReferences] = useState<Set<string>>(
+    new Set(),
+  ); // Track selected references
 
   const handleRemoveLibrary = () => {
     if (selectedLibrary) {
@@ -37,9 +45,25 @@ function ReferenceTable({
   };
 
   const handleRowClick = (row: Reference) => {
-    const reference = Object.assign(new Reference(), row); // rehydrate the reference
-    setSelectedReference(reference);
-    setOpenReferenceModal(true);
+    if (showAddReferencesMessage) {
+      // Toggle selection
+      setSelectedReferences((prevSelected) => {
+        const newSelected = new Set(prevSelected);
+        if (row.key) {
+          if (newSelected.has(row.key)) {
+            newSelected.delete(row.key);
+          } else {
+            newSelected.add(row.key);
+          }
+        }
+        return newSelected;
+      });
+    } else {
+      // Default behavior: open modal
+      const reference = Object.assign(new Reference(), row); // Rehydrate the reference
+      setSelectedReference(reference);
+      setOpenReferenceModal(true);
+    }
   };
 
   const handleCloseModal = () => {
@@ -84,7 +108,7 @@ function ReferenceTable({
     handleCloseModal();
   };
 
-  const handleAddReference = () => {
+  const handleNewReference = () => {
     const newReference = new Reference();
     setSelectedReference(newReference);
     setOpenReferenceModal(true);
@@ -94,6 +118,16 @@ function ReferenceTable({
     if (filePath) {
       window.electron.ipcRenderer.sendMessage('open-file', filePath);
     }
+  };
+
+  const handleAddReferences = () => {
+    setShowAddReferencesMessage(true);
+    setLibraryToAddRefs(selectedLibrary);
+  };
+
+  const handleCancel = () => {
+    setShowAddReferencesMessage(false);
+    setLibraryToAddRefs(null);
   };
 
   return (
@@ -117,31 +151,70 @@ function ReferenceTable({
         }}
       >
         <h2>References</h2>
+        {showAddReferencesMessage && selectedLibrary && (
+          <Box
+            sx={{
+              backgroundColor: 'rgba(0, 0, 0, 0.05)',
+              padding: 1,
+              marginTop: 1,
+              borderRadius: '100%', // Make the box more round like an ellipse
+              // textAlign: 'center', // Center the text inside the box
+            }}
+          >
+            <p>
+              Select References to Add to{' '}
+              <strong>{selectedLibrary.name}</strong>
+            </p>
+          </Box>
+        )}
         {selectedLibrary && (
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleAddReference} // Open modal for adding a reference
-            >
-              New Reference
-            </Button>
-            <Button
-              variant="contained"
-              color="error"
-              onClick={handleRemoveLibrary}
-              sx={{ marginLeft: 'auto' }}
-            >
-              Remove Library
-            </Button>
-            {/* <Button
-              variant="contained"
-              color="secondary"
-              onClick={handleLinkFile}
-              sx={{ marginLeft: 'auto' }}
-            >
-              Link File
-            </Button> */}
+            {!showAddReferencesMessage && (
+              <>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleAddReferences}
+                  sx={{ marginLeft: 'auto' }}
+                >
+                  Add References
+                </Button>
+                <Button
+                  variant="contained"
+                  color="secondary"
+                  onClick={handleNewReference} // Open modal for adding a reference
+                >
+                  New Reference
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={handleRemoveLibrary}
+                  sx={{ marginLeft: 'auto' }}
+                >
+                  Remove Library
+                </Button>
+              </>
+            )}
+            {showAddReferencesMessage && (
+              <>
+                <Button
+                  variant="contained"
+                  color="primary"
+                  onClick={handleNewReference} // Open modal for adding a reference
+                >
+                  Add Selected
+                </Button>
+                <Button
+                  variant="contained"
+                  color="error"
+                  onClick={handleCancel}
+                  sx={{ marginLeft: 'auto' }}
+                >
+                  Cancel
+                </Button>
+              </>
+            )}
           </Box>
         )}
       </Box>
@@ -174,6 +247,12 @@ function ReferenceTable({
                 <TableRow
                   key={row.key}
                   sx={{
+                    backgroundColor:
+                      showAddReferencesMessage &&
+                      row.key &&
+                      selectedReferences.has(row.key)
+                        ? 'rgba(0, 0, 255, 0.1)' // Highlight selected rows
+                        : 'inherit',
                     '&:hover': {
                       backgroundColor: 'rgba(0, 0, 0, 0.08)', // Light gray hover effect
                       cursor: 'pointer', // Change cursor to pointer on hover
@@ -212,7 +291,7 @@ function ReferenceTable({
           </Table>
         </TableContainer>
       ) : (
-        <p>Please select a Library</p>
+        <p>Please Select a Library or Search References</p>
       )}
 
       <ReferenceModal
