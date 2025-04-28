@@ -35,9 +35,9 @@ function ReferenceTable({
   const [libraryToAddRefs, setLibraryToAddRefs] = useState<Library | null>(
     null,
   );
-  const [selectedReferences, setSelectedReferences] = useState<Set<string>>(
+  const [selectedReferences, setSelectedReferences] = useState<Set<Reference>>(
     new Set(),
-  ); // Track selected references
+  );
 
   const handleRemoveLibrary = () => {
     if (selectedLibrary) {
@@ -50,12 +50,10 @@ function ReferenceTable({
       // Toggle selection
       setSelectedReferences((prevSelected) => {
         const newSelected = new Set(prevSelected);
-        if (row.key) {
-          if (newSelected.has(row.key)) {
-            newSelected.delete(row.key);
-          } else {
-            newSelected.add(row.key);
-          }
+        if (newSelected.has(row)) {
+          newSelected.delete(row);
+        } else {
+          newSelected.add(row);
         }
         return newSelected;
       });
@@ -129,6 +127,32 @@ function ReferenceTable({
   const handleCancel = () => {
     setShowAddReferencesMessage(false);
     setLibraryToAddRefs(null);
+  };
+
+  const handleAddSelected = () => {
+    if (libraryToAddRefs) {
+      const selectedRefs = Array.from(selectedReferences);
+
+      const updatedReferences = [
+        ...libraryToAddRefs.references,
+        ...selectedRefs.filter(
+          (ref) =>
+            !libraryToAddRefs.references.some(
+              (existingRef) => existingRef.key === ref.key,
+            ),
+        ),
+      ];
+
+      const updatedLibrary = new Library(
+        libraryToAddRefs.filePath,
+        updatedReferences,
+      );
+
+      onEditLibrary(updatedLibrary);
+      setSelectedReferences(new Set()); // Clear selected references
+      setShowAddReferencesMessage(false); // Exit add references mode
+      setLibraryToAddRefs(null); // Clear the libraryToAddRefs
+    }
   };
 
   return (
@@ -206,7 +230,7 @@ function ReferenceTable({
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleNewReference} // Open modal for adding a reference
+                  onClick={handleAddSelected}
                 >
                   Add Selected
                 </Button>
@@ -255,7 +279,7 @@ function ReferenceTable({
                     backgroundColor:
                       showAddReferencesMessage &&
                       row.key &&
-                      selectedReferences.has(row.key)
+                      selectedReferences.has(row)
                         ? 'rgba(0, 123, 255, 0.1)' // Highlight selected rows
                         : 'inherit',
                     '&:hover': {
