@@ -11,8 +11,9 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  Typography,
+  // Typography,
 } from '@mui/material';
+import icon from '../../../assets/icon.png';
 
 interface HeaderProps {
   onSearch: (query: string, searchField: string) => void;
@@ -37,7 +38,25 @@ function Header({ onSearch }: HeaderProps) {
         {/* <Typography variant="h6" sx={{ flexGrow: 1 }}>
           Toolbar
         </Typography> */}
+        <img
+          src={icon}
+          alt="App Icon"
+          style={{
+            width: 40,
+            height: 40,
+            marginRight: 16,
+          }}
+        />
+        <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
+          <TextField
+            variant="outlined"
+            size="small"
+            placeholder="Search All References..."
+            value={searchQuery}
+            onChange={handleSearchChange}
+            sx={{ backgroundColor: 'white', borderRadius: 1, width: 300 }}
+          />
           <FormControl
             variant="outlined"
             size="small"
@@ -66,16 +85,9 @@ function Header({ onSearch }: HeaderProps) {
               <MenuItem value="publisher">Publisher</MenuItem>
             </Select>
           </FormControl>
-          <TextField
-            variant="outlined"
-            size="small"
-            placeholder="Search All References..."
-            value={searchQuery}
-            onChange={handleSearchChange}
-            sx={{ backgroundColor: 'white', borderRadius: 1 }}
-          />
-          <Button color="inherit">Find Duplicates</Button>
         </Box>
+        <Box sx={{ flexGrow: 1 }} />
+        <Button color="inherit">Find Duplicates</Button>
       </Toolbar>
     </AppBar>
   );

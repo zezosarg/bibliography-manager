@@ -9,6 +9,7 @@ import {
   TableBody,
   Paper,
   Button,
+  Typography,
 } from '@mui/material';
 import Library from '../../main/model/Library';
 import Reference from '../../main/model/Reference';
@@ -154,17 +155,21 @@ function ReferenceTable({
         {showAddReferencesMessage && selectedLibrary && (
           <Box
             sx={{
-              backgroundColor: 'rgba(0, 0, 0, 0.05)',
-              padding: 1,
-              marginTop: 1,
-              borderRadius: '100%', // Make the box more round like an ellipse
-              // textAlign: 'center', // Center the text inside the box
+              backgroundColor: 'rgba(0, 123, 255, 0.1)', // Light blue background for better visibility
+              padding: 1, // Add more padding for better spacing
+              borderRadius: 2, // Slightly rounded corners
+              // border: '1px solid rgba(0, 123, 255, 0.5)', // Add a border for emphasis
+              textAlign: 'center', // Center the text inside the box
+              // marginBottom: 2, // Add spacing below the box
             }}
           >
-            <p>
+            <Typography
+            // variant="body1"
+            // sx={{ fontWeight: 'bold', color: 'rgba(0, 123, 255, 1)' }}
+            >
               Select References to Add to{' '}
               <strong>{selectedLibrary.name}</strong>
-            </p>
+            </Typography>
           </Box>
         )}
         {selectedLibrary && (
@@ -251,7 +256,7 @@ function ReferenceTable({
                       showAddReferencesMessage &&
                       row.key &&
                       selectedReferences.has(row.key)
-                        ? 'rgba(0, 0, 255, 0.1)' // Highlight selected rows
+                        ? 'rgba(0, 123, 255, 0.1)' // Highlight selected rows
                         : 'inherit',
                     '&:hover': {
                       backgroundColor: 'rgba(0, 0, 0, 0.08)', // Light gray hover effect
