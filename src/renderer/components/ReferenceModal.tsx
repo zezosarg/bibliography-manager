@@ -79,11 +79,11 @@ function ReferenceModal({
             </Button>
             <Button
               variant="contained"
-              color="error"
+              color="inherit"
               // startIcon={<DeleteIcon />}
               onClick={onDelete}
             >
-              Delete Reference
+              Delete
             </Button>
           </Box>
         </Box>

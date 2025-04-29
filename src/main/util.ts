@@ -63,7 +63,7 @@ export async function writeLibrary(lib: Library) {
   const references = lib.references.map((ref) => {
     return Object.assign(new Reference(), ref);
   }); // rehydrate lib.references
-  const library = new Library(lib.filePath, references); // rehydrate lib
+  const library = new Library(lib.filePath, lib.name, references); // rehydrate lib
   const bibContent = library.listReferences();
   try {
     fs.writeFileSync(library.filePath, bibContent, 'utf8');

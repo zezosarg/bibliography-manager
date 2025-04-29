@@ -86,6 +86,7 @@ function ReferenceTable({
       );
       const updatedLibrary = new Library(
         selectedLibrary.filePath,
+        selectedLibrary.name,
         updatedReferences,
       );
       onEditLibrary(updatedLibrary);
@@ -100,6 +101,7 @@ function ReferenceTable({
       );
       const updatedLibrary = new Library(
         selectedLibrary.filePath,
+        selectedLibrary.name,
         updatedReferences,
       );
       onEditLibrary(updatedLibrary);
@@ -127,6 +129,7 @@ function ReferenceTable({
   const handleCancel = () => {
     setShowAddReferencesMessage(false);
     setLibraryToAddRefs(null);
+    setSelectedReferences(new Set());
   };
 
   const handleAddSelected = () => {
@@ -145,6 +148,7 @@ function ReferenceTable({
 
       const updatedLibrary = new Library(
         libraryToAddRefs.filePath,
+        libraryToAddRefs.name,
         updatedReferences,
       );
 
@@ -192,7 +196,8 @@ function ReferenceTable({
             // sx={{ fontWeight: 'bold', color: 'rgba(0, 123, 255, 1)' }}
             >
               Select References to Add to{' '}
-              <strong>{selectedLibrary.name}</strong>
+              <strong>{libraryToAddRefs?.name || 'Unknown Library'}</strong> (
+              {selectedReferences.size} selected)
             </Typography>
           </Box>
         )}
@@ -210,14 +215,14 @@ function ReferenceTable({
                 </Button>
                 <Button
                   variant="contained"
-                  color="secondary"
+                  color="primary"
                   onClick={handleNewReference} // Open modal for adding a reference
                 >
                   New Reference
                 </Button>
                 <Button
                   variant="contained"
-                  color="error"
+                  color="inherit"
                   onClick={handleRemoveLibrary}
                   sx={{ marginLeft: 'auto' }}
                 >
@@ -236,7 +241,7 @@ function ReferenceTable({
                 </Button>
                 <Button
                   variant="contained"
-                  color="error"
+                  color="inherit"
                   onClick={handleCancel}
                   sx={{ marginLeft: 'auto' }}
                 >

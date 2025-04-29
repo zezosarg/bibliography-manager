@@ -10,6 +10,7 @@ import Library from '../main/model/Library';
 function Home() {
   const [selectedLibrary, setSelectedLibrary] = useState<Library | null>(null);
   const [libraries, setLibraries] = useState<Library[]>([]);
+  const [selectedItem, setSelectedItem] = useState<Library | null>(null);
 
   const handleRecordClick = (record: Library) => {
     setSelectedLibrary(record);
@@ -29,6 +30,7 @@ function Home() {
         prevLibraries.map((lib) => (lib.name === library.name ? library : lib)),
       );
       setSelectedLibrary(library);
+      setSelectedItem(library);
     } catch (error) {
       console.error('Failed to save library:', error);
       throw error;
@@ -66,10 +68,14 @@ function Home() {
       console.log('No results found');
       return;
     }
-    const filteredLibrary = new Library('Search Results', filteredRefs);
+    const filteredLibrary = new Library(
+      'Search Lib Path',
+      'Search Lib Name',
+      filteredRefs,
+    );
     setSelectedLibrary(filteredLibrary);
 
-    // clearSidebarSelection();
+    setSelectedItem(null);
   };
 
   const handleLibraryData = (...args: unknown[]) => {
@@ -108,7 +114,8 @@ function Home() {
       <Sidebar
         onRecordClick={handleRecordClick}
         libraries={libraries}
-        // onClearSelection={clearSidebarSelection}
+        selectedItem={selectedItem}
+        setSelectedItem={setSelectedItem}
       />
       <ReferenceTable
         selectedLibrary={selectedLibrary}

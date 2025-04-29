@@ -13,10 +13,17 @@ import Library from '../../main/model/Library';
 interface SidebarProps {
   onRecordClick: (item: Library) => void;
   libraries: Library[];
+  selectedItem: Library | null;
+  setSelectedItem: (item: Library | null) => void;
 }
 
-function Sidebar({ onRecordClick, libraries }: SidebarProps) {
-  const [selectedItem, setSelectedItem] = useState<Library | null>(null);
+function Sidebar({
+  onRecordClick,
+  libraries,
+  selectedItem,
+  setSelectedItem,
+}: SidebarProps) {
+  // const [selectedItem, setSelectedItem] = useState<Library | null>(null);
 
   const handleItemClick = (item: Library) => {
     setSelectedItem(item);
@@ -61,10 +68,15 @@ function Sidebar({ onRecordClick, libraries }: SidebarProps) {
               divider
               onClick={() => handleItemClick(item)}
               selected={selectedItem === item}
+              sx={{
+                '&:hover': {
+                  backgroundColor: 'rgba(0, 0, 0, 0.08)', // Light gray hover effect
+                },
+              }}
             >
               <ListItemText
                 primary={item.name}
-                //  secondary={`Age: ${item.age}, Job: ${item.job}`}
+                // secondary={`Path: ${item.filePath}`}
               />
             </ListItemButton>
           ))}

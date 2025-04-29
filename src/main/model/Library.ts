@@ -11,8 +11,8 @@ export default class Library {
 
   filePath: string;
 
-  constructor(filePath: string, references: Reference[] = []) {
-    this.name = path.basename(filePath);
+  constructor(filePath: string, name?: string, references: Reference[] = []) {
+    this.name = name || path.basename(filePath);
     this.references = references;
     this.filePath = filePath;
   }
