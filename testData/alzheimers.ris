@@ -1,0 +1,23 @@
+TY  - JOUR
+T1  - A six stage approach for the diagnosis of the Alzheimer’s disease based on fMRI data
+AU  - Tripoliti, Evanthia E.
+AU  - Fotiadis, Dimitrios I.
+AU  - Argyropoulou, Maria
+AU  - Manis, George
+JO  - Journal of Biomedical Informatics
+VL  - 43
+IS  - 2
+SP  - 307
+EP  - 320
+PY  - 2010
+DA  - 2010/04/01/
+SN  - 1532-0464
+DO  - https://doi.org/10.1016/j.jbi.2009.10.004
+UR  - https://www.sciencedirect.com/science/article/pii/S1532046409001464
+KW  - Alzheimer’s disease
+KW  - Classification
+KW  - Functional magnetic resonance imaging
+KW  - Random Forests
+KW  - Support Vector Machines
+AB  - The aim of this work is to present an automated method that assists in the diagnosis of Alzheimer’s disease and also supports the monitoring of the progression of the disease. The method is based on features extracted from the data acquired during an fMRI experiment. It consists of six stages: (a) preprocessing of fMRI data, (b) modeling of fMRI voxel time series using a Generalized Linear Model, (c) feature extraction from the fMRI data, (d) feature selection, (e) classification using classical and improved variations of the Random Forests algorithm and Support Vector Machines, and (f) conversion of the trees, of the Random Forest, to rules which have physical meaning. The method is evaluated using a dataset of 41 subjects. The results of the proposed method indicate the validity of the method in the diagnosis (accuracy 94%) and monitoring of the Alzheimer’s disease (accuracy 97% and 99%).
+ER  - 
