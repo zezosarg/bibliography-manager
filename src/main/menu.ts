@@ -166,20 +166,14 @@ export default class MenuBuilder {
           label: 'Documentation',
           click() {
             shell.openExternal(
-              'https://github.com/electron/electron/tree/main/docs#readme',
+              'https://github.com/zezosarg/bibliography-manager',
             );
           },
         },
         {
-          label: 'Community Discussions',
+          label: 'UoI CSE',
           click() {
-            shell.openExternal('https://www.electronjs.org/community');
-          },
-        },
-        {
-          label: 'Search Issues',
-          click() {
-            shell.openExternal('https://github.com/electron/electron/issues');
+            shell.openExternal('https://cse.uoi.gr/');
           },
         },
       ],

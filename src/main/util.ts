@@ -17,17 +17,22 @@ export function resolveHtmlPath(htmlFileName: string) {
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
 
-export async function updatePathsFile(library: Library) {
+export async function updatePathsFile(
+  library: Library,
+  action: 'add' | 'remove',
+) {
   const pathsFilePath = path.join(os.homedir(), 'bibliographyManager.json');
   let pathsData: { paths: string[] } = { paths: [] };
 
   if (fs.existsSync(pathsFilePath)) {
     const fileContent = fs.readFileSync(pathsFilePath, 'utf8');
     pathsData = JSON.parse(fileContent);
-  }
 
-  if (!pathsData.paths.includes(library.filePath)) {
-    pathsData.paths.push(library.filePath);
+    if (action === 'add' && !pathsData.paths.includes(library.filePath)) {
+      pathsData.paths.push(library.filePath);
+    } else if (action === 'remove') {
+      pathsData.paths = pathsData.paths.filter((p) => p !== library.filePath);
+    }
     fs.writeFileSync(pathsFilePath, JSON.stringify(pathsData, null, 2), 'utf8');
   }
 }
@@ -50,8 +55,9 @@ export async function handleFilePick(mainWindow: BrowserWindow) {
         const bibFilePath = filePath.replace(/\.ris$/, '.bib');
         fs.writeFileSync(bibFilePath, library.listReferences(), 'utf8');
         library.filePath = bibFilePath;
+        library.name = path.basename(bibFilePath);
       }
-      updatePathsFile(library);
+      updatePathsFile(library, 'add');
       mainWindow.webContents.send('open-library', library);
     } catch (error) {
       console.error('Error reading .bib file:', error);
@@ -84,7 +90,7 @@ export async function handleNewFile(mainWindow: BrowserWindow) {
     try {
       fs.writeFileSync(filePath, '', 'utf8');
       const library = new Library(filePath);
-      updatePathsFile(library);
+      updatePathsFile(library, 'add');
       mainWindow.webContents.send('open-library', library);
     } catch (error) {
       console.error('Error creating new library file:', error);

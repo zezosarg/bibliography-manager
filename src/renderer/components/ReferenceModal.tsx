@@ -10,6 +10,7 @@ import {
 } from '@mui/material';
 // import DeleteIcon from '@mui/icons-material/Delete';
 import Reference from '../../main/model/Reference';
+import Library from '../../main/model/Library';
 
 interface ReferenceModalProps {
   open: boolean;
@@ -39,7 +40,9 @@ function ReferenceModal({
 
   const handleSave = () => {
     if (reference) {
-      const updatedReference = Reference.parseBibTeXString(bibTeXString);
+      // const updatedReference = Reference.parseBibTeXString(bibTeXString);
+      const lib = Library.parseString(bibTeXString, 'lib.bib');
+      const updatedReference = lib.references[0];
       onSave(updatedReference);
     }
   };
@@ -58,7 +61,7 @@ function ReferenceModal({
   };
 
   return (
-    <Dialog open={open} onClose={onClose} fullWidth maxWidth="md">
+    <Dialog open={open} onClose={onClose} fullWidth maxWidth="lg">
       <DialogTitle>
         <Box
           sx={{
@@ -75,7 +78,7 @@ function ReferenceModal({
               // startIcon={<DeleteIcon />}
               onClick={handleLinkFile}
             >
-              Add Link
+              Link File
             </Button>
             <Button
               variant="contained"

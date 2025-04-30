@@ -14,7 +14,7 @@ import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import fs from 'fs';
 import os from 'os';
-import { resolveHtmlPath, writeLibrary } from './util';
+import { resolveHtmlPath, writeLibrary, updatePathsFile } from './util';
 import MenuBuilder from './menu';
 import Library from './model/Library';
 
@@ -69,6 +69,10 @@ ipcMain.handle('open-file-dialog', async () => {
 
 ipcMain.on('open-file', async (event, arg) => {
   shell.openPath(arg);
+});
+
+ipcMain.on('remove-library', async (event, arg) => {
+  updatePathsFile(arg, 'remove');
 });
 
 if (process.env.NODE_ENV === 'production') {

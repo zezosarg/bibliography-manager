@@ -273,6 +273,11 @@ function ReferenceTable({
                 <TableCell>Pages</TableCell>
                 <TableCell>Year</TableCell>
                 <TableCell>Publisher</TableCell>
+                <TableCell>ISSN</TableCell>
+                {/* <TableCell>DOI</TableCell> */}
+                <TableCell>URL</TableCell>
+                {/* <TableCell>Keywords</TableCell> */}
+                {/* <TableCell>Abstract</TableCell> */}
                 <TableCell>File</TableCell>
               </TableRow>
             </TableHead>
@@ -303,6 +308,26 @@ function ReferenceTable({
                   <TableCell>{row.pages}</TableCell>
                   <TableCell>{row.year}</TableCell>
                   <TableCell>{row.publisher}</TableCell>
+                  <TableCell>{row.issn}</TableCell>
+                  {/* <TableCell>{row.doi}</TableCell> */}
+                  {/* <TableCell>{row.url}</TableCell> */}
+                  <TableCell>
+                    {row.url ? (
+                      <a
+                        href={row.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        style={{ textDecoration: 'underline', color: 'blue' }}
+                        onClick={(e) => e.stopPropagation()} // Prevent triggering row click
+                      >
+                        Link
+                      </a>
+                    ) : (
+                      'N/A'
+                    )}
+                  </TableCell>
+                  {/* <TableCell>{row.keywords}</TableCell> */}
+                  {/* <TableCell>{row.abstract}</TableCell> */}
                   <TableCell>
                     {row.linkedFilePath ? (
                       <Button

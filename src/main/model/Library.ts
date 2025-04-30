@@ -35,6 +35,7 @@ export default class Library {
 
   static parseBibTeXString(bibFile: string, filePath: string): Library {
     const bibData = bibtexParse.entries(bibFile);
+    console.log('Parsed BibTeX data:', bibData);
     const library = new Library(filePath);
     bibData.forEach((entry: any) => {
       const reference = Object.assign(new Reference(), {
@@ -48,6 +49,11 @@ export default class Library {
         pages: entry.PAGES,
         year: entry.YEAR,
         publisher: entry.PUBLISHER,
+        issn: entry.ISSN,
+        doi: entry.DOI,
+        url: entry.URL,
+        keywords: entry.KEYWORDS,
+        abstract: entry.ABSTRACT,
         linkedFilePath: entry.FILE,
       });
       library.references.push(reference);
@@ -67,7 +73,7 @@ export default class Library {
         if (key === 'TY') {
           // Start of a new entry
           currentEntry = { entryType: value };
-        } else if (key === 'A1') {
+        } else if (key === 'AU' || key === 'A1') {
           // Handle multiple authors
           if (!currentEntry[key]) {
             currentEntry[key] = [];
@@ -77,12 +83,14 @@ export default class Library {
           currentEntry[key] = value;
         }
       } else if (line.startsWith('ER')) {
+        const authorKey = currentEntry.AU ? 'AU' : 'A1';
         // End of the current entry
         const reference = Object.assign(new Reference(), {
-          // key: currentEntry.ID || undefined,
           entryType: currentEntry.entryType,
           title: currentEntry.T1,
-          author: currentEntry.A1 ? currentEntry.A1.join(', ') : '',
+          author: currentEntry[authorKey]
+            ? currentEntry[authorKey].join(', ')
+            : '',
           journal: currentEntry.JO,
           volume: currentEntry.VL,
           number: currentEntry.IS,

@@ -8,7 +8,8 @@ export type Channels =
   | 'write-library'
   | 'load-libraries'
   | 'open-file-dialog'
-  | 'open-file';
+  | 'open-file'
+  | 'remove-library';
 
 const electronHandler = {
   ipcRenderer: {

@@ -21,6 +21,7 @@ function Home() {
       prevLibraries.filter((lib) => lib !== library),
     );
     setSelectedLibrary(null);
+    window.electron.ipcRenderer.sendMessage('remove-library', library);
   };
 
   const handleEditLibrary = (library: Library) => {
