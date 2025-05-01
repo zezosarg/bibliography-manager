@@ -37,14 +37,25 @@ export async function updatePathsFile(
   }
 }
 
-export async function handleFilePick(mainWindow: BrowserWindow) {
-  const result = await dialog.showOpenDialog({
+export function openFileDialog(fileTypes: string[]) {
+  return dialog.showOpenDialog({
     properties: ['openFile'],
-    filters: [
-      { name: 'Bib TeX Files', extensions: ['bib'] },
-      { name: 'Research Information Systems', extensions: ['ris'] },
-    ],
+    filters: fileTypes.map((type) => ({
+      name: type.toUpperCase(),
+      extensions: [type],
+    })),
   });
+}
+
+export async function handleFilePick(mainWindow: BrowserWindow) {
+  // const result = await dialog.showOpenDialog({
+  //   properties: ['openFile'],
+  //   filters: [
+  //     { name: 'Bib TeX Files', extensions: ['bib'] },
+  //     { name: 'Research Information Systems', extensions: ['ris'] },
+  //   ],
+  // });
+  const result = await openFileDialog(['bib', 'ris']);
 
   if (!result.canceled && result.filePaths.length > 0) {
     const filePath = result.filePaths[0];
@@ -96,4 +107,25 @@ export async function handleNewFile(mainWindow: BrowserWindow) {
       console.error('Error creating new library file:', error);
     }
   }
+}
+
+export async function loadLibraries() {
+  const filePath = path.join(os.homedir(), 'bibliographyManager.json');
+  if (!fs.existsSync(filePath)) {
+    fs.writeFileSync(filePath, JSON.stringify({ paths: [] }, null, 2), 'utf-8');
+    return []; // Return an empty array if the file doesn't exist
+  }
+
+  const data = fs.readFileSync(filePath, 'utf-8');
+  const { paths } = JSON.parse(data);
+
+  const libraries = paths.map((libraryPath: string) => {
+    if (fs.existsSync(libraryPath)) {
+      const libraryData = fs.readFileSync(libraryPath, 'utf-8');
+      return Library.parseString(libraryData, libraryPath);
+    }
+    return null;
+  });
+
+  return libraries.filter((library: Library) => library !== null); // Filter out invalid paths
 }

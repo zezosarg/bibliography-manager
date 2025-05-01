@@ -1,5 +1,4 @@
 // BibTexReference class to represent an individual BibTeX entry
-const bibtexParse = require('bibtex-parse');
 
 export default class Reference {
   key?: string; // Unique key for the BibTeX entry
@@ -99,30 +98,4 @@ export default class Reference {
     bibtex += `}`;
     return bibtex;
   }
-
-  // static parseBibTeXString(bibFile: string): Reference {
-  //   const bibData = bibtexParse.entries(bibFile);
-  //   const entry = bibData[0];
-
-  //   const reference = Object.assign(new Reference(), {
-  //     key: entry.key,
-  //     entryType: entry.type,
-  //     title: entry.TITLE,
-  //     author: entry.AUTHOR,
-  //     journal: entry.JOURNAL,
-  //     volume: entry.VOLUME,
-  //     number: entry.NUMBER,
-  //     pages: entry.PAGES,
-  //     year: entry.YEAR,
-  //     publisher: entry.PUBLISHER,
-  //     issn: entry.ISSN,
-  //     doi: entry.DOI,
-  //     url: entry.URL,
-  //     keywords: entry.KEYWORDS,
-  //     abstract: entry.ABSTRACT,
-  //     linkedFilePath: entry.FILE,
-  //   });
-
-  //   return reference;
-  // }
 }

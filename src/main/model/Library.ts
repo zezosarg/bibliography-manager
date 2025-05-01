@@ -35,7 +35,6 @@ export default class Library {
 
   static parseBibTeXString(bibFile: string, filePath: string): Library {
     const bibData = bibtexParse.entries(bibFile);
-    console.log('Parsed BibTeX data:', bibData);
     const library = new Library(filePath);
     bibData.forEach((entry: any) => {
       const reference = Object.assign(new Reference(), {
@@ -79,6 +78,12 @@ export default class Library {
             currentEntry[key] = [];
           }
           currentEntry[key].push(value);
+        } else if (key === 'KW') {
+          // Handle keywords
+          if (!currentEntry[key]) {
+            currentEntry[key] = [];
+          }
+          currentEntry[key].push(value);
         } else {
           currentEntry[key] = value;
         }
@@ -94,9 +99,16 @@ export default class Library {
           journal: currentEntry.JO,
           volume: currentEntry.VL,
           number: currentEntry.IS,
-          pages: currentEntry.SP,
+          pages: currentEntry.EP
+            ? `${currentEntry.SP}-${currentEntry.EP}`
+            : currentEntry.SP,
           year: currentEntry.Y1 || currentEntry.PY,
           publisher: currentEntry.PB,
+          issn: currentEntry.SN,
+          doi: currentEntry.DO,
+          url: currentEntry.UR,
+          abstract: currentEntry.AB,
+          keywords: currentEntry.KW ? currentEntry.KW.join(', ') : '',
         });
         library.references.push(reference);
         currentEntry = {};

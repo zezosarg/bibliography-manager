@@ -12,11 +12,14 @@ import path from 'path';
 import { app, BrowserWindow, ipcMain, shell, dialog } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import fs from 'fs';
-import os from 'os';
-import { resolveHtmlPath, writeLibrary, updatePathsFile } from './util';
+import {
+  resolveHtmlPath,
+  writeLibrary,
+  updatePathsFile,
+  loadLibraries,
+  openFileDialog,
+} from './util';
 import MenuBuilder from './menu';
-import Library from './model/Library';
 
 class AppUpdater {
   constructor() {
@@ -39,32 +42,16 @@ ipcMain.on('write-library', async (event, arg) => {
 });
 
 ipcMain.handle('load-libraries', async () => {
-  const filePath = path.join(os.homedir(), 'bibliographyManager.json');
-  if (!fs.existsSync(filePath)) {
-    fs.writeFileSync(filePath, JSON.stringify({ paths: [] }, null, 2), 'utf-8');
-    return []; // Return an empty array if the file doesn't exist
-  }
-
-  const data = fs.readFileSync(filePath, 'utf-8');
-  const { paths } = JSON.parse(data);
-
-  const libraries = paths.map((libraryPath: string) => {
-    if (fs.existsSync(libraryPath)) {
-      const libraryData = fs.readFileSync(libraryPath, 'utf-8');
-      return Library.parseString(libraryData, libraryPath);
-    }
-    return null;
-  });
-
-  return libraries.filter((library: Library) => library !== null); // Filter out invalid paths
+  return loadLibraries();
 });
 
 ipcMain.handle('open-file-dialog', async () => {
-  const result = await dialog.showOpenDialog({
-    properties: ['openFile'],
-    filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
-  });
-  return result; // Return the file paths and cancellation status
+  // const result = await dialog.showOpenDialog({
+  //   properties: ['openFile'],
+  //   filters: [{ name: 'PDF Files', extensions: ['pdf'] }],
+  // });
+  // return result; // Return the file paths and cancellation status
+  return openFileDialog(['pdf']);
 });
 
 ipcMain.on('open-file', async (event, arg) => {
