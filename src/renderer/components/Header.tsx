@@ -79,6 +79,7 @@ function Header({ onSearch }: HeaderProps) {
                 Select Field
               </MenuItem> */}
               <MenuItem value="all">All</MenuItem>
+              <MenuItem value="title">Title</MenuItem>
               <MenuItem value="author">Author</MenuItem>
               <MenuItem value="year">Year</MenuItem>
               <MenuItem value="journal">Journal</MenuItem>

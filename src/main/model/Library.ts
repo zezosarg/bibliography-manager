@@ -37,6 +37,33 @@ export default class Library {
     const bibData = bibtexParse.entries(bibFile);
     const library = new Library(filePath);
     bibData.forEach((entry: any) => {
+      const recognizedFields = [
+        'key',
+        'type',
+        'TITLE',
+        'AUTHOR',
+        'JOURNAL',
+        'VOLUME',
+        'NUMBER',
+        'PAGES',
+        'YEAR',
+        'PUBLISHER',
+        'ISSN',
+        'DOI',
+        'URL',
+        'KEYWORDS',
+        'ABSTRACT',
+        'FILE',
+      ];
+
+      const metadata: Record<string, any> = {};
+      Object.entries(entry)
+        .filter(([key]) => !recognizedFields.includes(key))
+        .reduce((acc, [key, value]) => {
+          acc[key] = value;
+          return acc;
+        }, metadata);
+
       const reference = Object.assign(new Reference(), {
         key: entry.key,
         entryType: entry.type,
@@ -54,6 +81,7 @@ export default class Library {
         keywords: entry.KEYWORDS,
         abstract: entry.ABSTRACT,
         linkedFilePath: entry.FILE,
+        metadata,
       });
       library.references.push(reference);
     });
@@ -64,32 +92,52 @@ export default class Library {
   static parseRisString(risFile: string, filePath: string): Library {
     const lines = risFile.split(/\r?\n/);
     const library = new Library(filePath);
-    let currentEntry: any = {};
+    let currentEntry: Record<string, any> = {};
+
     lines.forEach((line) => {
       const match = line.match(/^([A-Z0-9]{2}) {2}- (.+)$/);
       if (match) {
         const [_, key, value] = match;
         if (key === 'TY') {
-          // Start of a new entry
           currentEntry = { entryType: value };
         } else if (key === 'AU' || key === 'A1') {
-          // Handle multiple authors
-          if (!currentEntry[key]) {
-            currentEntry[key] = [];
-          }
+          currentEntry[key] = currentEntry[key] || [];
           currentEntry[key].push(value);
         } else if (key === 'KW') {
-          // Handle keywords
-          if (!currentEntry[key]) {
-            currentEntry[key] = [];
-          }
+          currentEntry[key] = currentEntry[key] || [];
           currentEntry[key].push(value);
         } else {
           currentEntry[key] = value;
         }
       } else if (line.startsWith('ER')) {
         const authorKey = currentEntry.AU ? 'AU' : 'A1';
-        // End of the current entry
+        const metadata: Record<string, any> = {};
+        Object.entries(currentEntry).forEach(([key, value]) => {
+          if (
+            ![
+              'TY',
+              'T1',
+              'AU',
+              'A1',
+              'JO',
+              'VL',
+              'IS',
+              'SP',
+              'EP',
+              'Y1',
+              'PY',
+              'PB',
+              'SN',
+              'DO',
+              'UR',
+              'AB',
+              'KW',
+            ].includes(key)
+          ) {
+            metadata[key] = value;
+          }
+        });
+
         const reference = Object.assign(new Reference(), {
           entryType: currentEntry.entryType,
           title: currentEntry.T1,
@@ -109,11 +157,13 @@ export default class Library {
           url: currentEntry.UR,
           abstract: currentEntry.AB,
           keywords: currentEntry.KW ? currentEntry.KW.join(', ') : '',
+          metadata,
         });
         library.references.push(reference);
         currentEntry = {};
       }
     });
+
     return library;
   }
 }

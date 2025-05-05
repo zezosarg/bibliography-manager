@@ -33,6 +33,9 @@ export default class Reference {
 
   linkedFilePath?: string;
 
+  // Property to store additional (not recognized) fields
+  metadata: Record<string, any>;
+
   constructor(
     key?: string,
     entryType?: string,
@@ -50,6 +53,7 @@ export default class Reference {
     keywords?: string,
     abstract?: string,
     linkedFilePath?: string,
+    metadata: Record<string, any> = {},
   ) {
     this.key = key || this.generateKey();
     this.entryType = entryType;
@@ -67,6 +71,7 @@ export default class Reference {
     this.keywords = keywords;
     this.abstract = abstract;
     this.linkedFilePath = linkedFilePath;
+    this.metadata = metadata;
   }
 
   generateKey(): string {
@@ -94,6 +99,11 @@ export default class Reference {
     if (this.keywords) bibtex += `  keywords = {${this.keywords}},\n`;
     if (this.abstract) bibtex += `  abstract = {${this.abstract}},\n`;
     if (this.linkedFilePath) bibtex += `  file = {${this.linkedFilePath}},\n`;
+
+    // Add metadata fields to BibTeX
+    Object.entries(this.metadata).forEach(([key, value]) => {
+      bibtex += `  ${key} = {${value}},\n`;
+    });
 
     bibtex += `}`;
     return bibtex;
