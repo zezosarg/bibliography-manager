@@ -26,7 +26,7 @@ sudo npm install -g npm@10.2.3
 
 Or check:  <a href="https://nodejs.org/en/download">Download Node.js®</a>
 
-## Install the project
+## Install dependencies
 After cloning or downloading the repo, install dependencies by executing:
 
 ```bash
