@@ -3,7 +3,7 @@
 <br>
 
 <p>
-  Some of the technologies used
+  Some of the technologies used:
   <a href="https://github.com/electron-react-boilerplate">Electron React Boilerplate</a>,
   <a href="https://electron.atom.io/">Electron</a>, 
   <a href="https://facebook.github.io/react/">React</a>, 
@@ -15,7 +15,9 @@
 ## Requirements
 Node.js version 20.10.0 and npm version 10.2.3
 
-## Execute
+## Download and install Requirements
+Execute
+
 ```bash
 curl -fsSL https://deb.nodesource.com/setup_20.x | sudo -E bash -
 sudo apt-get install -y nodejs=20.10.0-1nodesource1
@@ -24,8 +26,8 @@ sudo npm install -g npm@10.2.3
 
 Or check  <a href="https://nodejs.org/en/download">Download Node.js®</a>
 
-## Install
-First clone the repo, then install dependencies executing:
+## Install the project
+After cloning or downloading the repo, install dependencies executing:
 
 ```bash
 cd your-project-name
