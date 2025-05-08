@@ -4,7 +4,6 @@
 
 <p>
   Some of the technologies used:
-  <a href="https://github.com/electron-react-boilerplate">Electron React Boilerplate</a>,
   <a href="https://electron.atom.io/">Electron</a>, 
   <a href="https://facebook.github.io/react/">React</a>, 
   <a href="https://github.com/reactjs/react-router">React Router</a>, 
