@@ -8,7 +8,6 @@ import {
   Button,
   Box,
 } from '@mui/material';
-// import DeleteIcon from '@mui/icons-material/Delete';
 import Reference from '../../main/model/Reference';
 import Library from '../../main/model/Library';
 
@@ -30,7 +29,6 @@ function ReferenceModal({
   const [bibTeXString, setBibTeXString] = useState('');
 
   useEffect(() => {
-    // Update the state when the reference prop changes
     setBibTeXString(reference?.toBibTeXString() || '');
   }, [reference]);
 
@@ -40,7 +38,6 @@ function ReferenceModal({
 
   const handleSave = () => {
     if (reference) {
-      // const updatedReference = Reference.parseBibTeXString(bibTeXString);
       const lib = Library.parseString(bibTeXString, 'lib.bib');
       const updatedReference = lib.references[0];
       onSave(updatedReference);
@@ -75,17 +72,11 @@ function ReferenceModal({
             <Button
               variant="contained"
               color="primary"
-              // startIcon={<DeleteIcon />}
               onClick={handleLinkFile}
             >
               Link File
             </Button>
-            <Button
-              variant="contained"
-              color="inherit"
-              // startIcon={<DeleteIcon />}
-              onClick={onDelete}
-            >
+            <Button variant="contained" color="inherit" onClick={onDelete}>
               Delete
             </Button>
           </Box>

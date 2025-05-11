@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import {
   AppBar,
   Toolbar,
-  // Typography,
   Button,
   TextField,
   Box,
@@ -11,15 +10,15 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
-  // Typography,
 } from '@mui/material';
 import icon from '../../../assets/icon.png';
 
 interface HeaderProps {
   onSearch: (query: string, searchField: string) => void;
+  onFindDuplicates: () => void;
 }
 
-function Header({ onSearch }: HeaderProps) {
+function Header({ onSearch, onFindDuplicates }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchField, setSearchField] = useState('all');
 
@@ -35,9 +34,6 @@ function Header({ onSearch }: HeaderProps) {
   return (
     <AppBar position="fixed">
       <Toolbar>
-        {/* <Typography variant="h6" sx={{ flexGrow: 1 }}>
-          Toolbar
-        </Typography> */}
         <img
           src={icon}
           alt="App Icon"
@@ -75,9 +71,6 @@ function Header({ onSearch }: HeaderProps) {
               onChange={handleSearchFieldChange}
               label="Search Field"
             >
-              {/* <MenuItem value="" disabled>
-                Select Field
-              </MenuItem> */}
               <MenuItem value="all">All</MenuItem>
               <MenuItem value="title">Title</MenuItem>
               <MenuItem value="author">Author</MenuItem>
@@ -88,7 +81,9 @@ function Header({ onSearch }: HeaderProps) {
           </FormControl>
         </Box>
         <Box sx={{ flexGrow: 1 }} />
-        <Button color="inherit">Find Duplicates</Button>
+        <Button color="inherit" onClick={onFindDuplicates}>
+          Find Duplicates
+        </Button>
       </Toolbar>
     </AppBar>
   );

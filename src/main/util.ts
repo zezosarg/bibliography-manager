@@ -48,13 +48,6 @@ export function openFileDialog(fileTypes: string[]) {
 }
 
 export async function handleFilePick(mainWindow: BrowserWindow) {
-  // const result = await dialog.showOpenDialog({
-  //   properties: ['openFile'],
-  //   filters: [
-  //     { name: 'Bib TeX Files', extensions: ['bib'] },
-  //     { name: 'Research Information Systems', extensions: ['ris'] },
-  //   ],
-  // });
   const result = await openFileDialog(['bib', 'ris']);
 
   if (!result.canceled && result.filePaths.length > 0) {

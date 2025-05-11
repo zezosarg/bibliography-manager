@@ -1,16 +1,20 @@
 import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { useState, useEffect } from 'react';
-import { Box, CssBaseline } from '@mui/material';
+import { Alert, Box, CssBaseline, Snackbar } from '@mui/material';
 import Sidebar from './components/Sidebar';
 import ReferenceTable from './components/ReferenceTable';
 import Header from './components/Header';
 import Library from '../main/model/Library';
+import Reference from '../main/model/Reference';
 
 function Home() {
   const [selectedLibrary, setSelectedLibrary] = useState<Library | null>(null);
   const [libraries, setLibraries] = useState<Library[]>([]);
   const [selectedItem, setSelectedItem] = useState<Library | null>(null);
+  // const [duplicates, setDuplicates] = useState<Reference[][]>([]);
+  const [snackbarOpen, setSnackbarOpen] = useState(false);
+  const [snackbarMessage, setSnackbarMessage] = useState('');
 
   const handleRecordClick = (record: Library) => {
     setSelectedLibrary(record);
@@ -100,6 +104,52 @@ function Home() {
     }
   };
 
+  const handleFindDuplicates = () => {
+    // setDuplicates([]);
+
+    if (!selectedLibrary) {
+      setSnackbarMessage('No library selected. Please select a library first.');
+      setSnackbarOpen(true);
+      return;
+    }
+
+    const { references } = selectedLibrary;
+
+    const seen = new Map<string, Reference[]>();
+    const duplicateGroups: Reference[][] = [];
+
+    references.forEach((ref) => {
+      const key = `${ref.title?.toLowerCase() || ''}-${ref.author?.toLowerCase() || ''}-${ref.year || ''}`;
+      if (seen.has(key)) {
+        seen.get(key)?.push(ref);
+      } else {
+        seen.set(key, [ref]);
+      }
+    });
+
+    seen.forEach((group) => {
+      if (group.length > 1) {
+        duplicateGroups.push(group);
+      }
+    });
+
+    // setDuplicates(duplicateGroups);
+
+    if (duplicateGroups.length === 0) {
+      setSnackbarMessage('No duplicates found');
+      setSnackbarOpen(true);
+    } else {
+      console.log('Duplicates found:', duplicateGroups);
+      const duplicateLibrary = new Library(
+        'Duplicates',
+        'Duplicate References',
+        duplicateGroups.flat(),
+      );
+      setSelectedItem(null);
+      setSelectedLibrary(duplicateLibrary);
+    }
+  };
+
   useEffect(() => {
     loadLibraries();
     window.electron.ipcRenderer.on('open-library', handleLibraryData);
@@ -111,7 +161,7 @@ function Home() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <Header onSearch={handleSearch} />
+      <Header onSearch={handleSearch} onFindDuplicates={handleFindDuplicates} />
       <Sidebar
         onRecordClick={handleRecordClick}
         libraries={libraries}
@@ -122,7 +172,22 @@ function Home() {
         selectedLibrary={selectedLibrary}
         onRemoveLibrary={handleRemoveLibrary}
         onEditLibrary={handleEditLibrary}
+        // duplicates={duplicates}
       />
+      <Snackbar
+        open={snackbarOpen}
+        autoHideDuration={3000} // Automatically hide after 3 seconds
+        onClose={() => setSnackbarOpen(false)}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
+      >
+        <Alert
+          onClose={() => setSnackbarOpen(false)}
+          severity="info"
+          sx={{ width: '100%' }}
+        >
+          {snackbarMessage}
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }

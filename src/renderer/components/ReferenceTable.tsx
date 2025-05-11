@@ -19,12 +19,14 @@ interface ReferenceTableProps {
   selectedLibrary: Library | null;
   onRemoveLibrary: (library: Library) => void;
   onEditLibrary: (library: Library) => void;
+  // duplicates: Reference[][] | null; // Optional prop for duplicates
 }
 
 function ReferenceTable({
   selectedLibrary,
   onRemoveLibrary,
   onEditLibrary,
+  // duplicates,
 }: ReferenceTableProps) {
   const [openReferenceModal, setOpenReferenceModal] = useState(false);
   const [selectedReference, setSelectedReference] = useState<Reference | null>(
@@ -153,9 +155,9 @@ function ReferenceTable({
       );
 
       onEditLibrary(updatedLibrary);
-      setSelectedReferences(new Set()); // Clear selected references
+      setSelectedReferences(new Set());
       setShowAddReferencesMessage(false); // Exit add references mode
-      setLibraryToAddRefs(null); // Clear the libraryToAddRefs
+      setLibraryToAddRefs(null);
     }
   };
 
@@ -166,7 +168,7 @@ function ReferenceTable({
         flexGrow: 1,
         bgcolor: 'background.default',
         p: 2,
-        marginLeft: 0, // Adjust the content to be next to the sidebar
+        marginLeft: 0,
         marginTop: 5, // Offset for the top bar height
         minHeight: '100vh',
       }}
@@ -175,26 +177,21 @@ function ReferenceTable({
         sx={{
           display: 'flex',
           justifyContent: 'space-between', // Space between the title and the button
-          alignItems: 'center', // Align items vertically in the center
-          marginBottom: 0, // Add some spacing below the container
+          alignItems: 'center',
+          marginBottom: 0,
         }}
       >
         <h2>References</h2>
         {showAddReferencesMessage && selectedLibrary && (
           <Box
             sx={{
-              backgroundColor: 'rgba(0, 123, 255, 0.1)', // Light blue background for better visibility
-              padding: 1, // Add more padding for better spacing
+              backgroundColor: 'rgba(0, 123, 255, 0.1)',
+              padding: 1,
               borderRadius: 2, // Slightly rounded corners
-              // border: '1px solid rgba(0, 123, 255, 0.5)', // Add a border for emphasis
-              textAlign: 'center', // Center the text inside the box
-              // marginBottom: 2, // Add spacing below the box
+              textAlign: 'center',
             }}
           >
-            <Typography
-            // variant="body1"
-            // sx={{ fontWeight: 'bold', color: 'rgba(0, 123, 255, 1)' }}
-            >
+            <Typography>
               Select References to Add to{' '}
               <strong>{libraryToAddRefs?.name || 'Unknown Library'}</strong> (
               {selectedReferences.size} selected)
@@ -216,7 +213,7 @@ function ReferenceTable({
                 <Button
                   variant="contained"
                   color="primary"
-                  onClick={handleNewReference} // Open modal for adding a reference
+                  onClick={handleNewReference}
                 >
                   New Reference
                 </Button>
@@ -292,8 +289,18 @@ function ReferenceTable({
                       selectedReferences.has(row)
                         ? 'rgba(0, 123, 255, 0.1)' // Highlight selected rows
                         : 'inherit',
+                    // '& td': {
+                    //   fontWeight: (() => {
+                    //     const groupIndex = duplicates?.findIndex((group) =>
+                    //       group.includes(row),
+                    //     );
+                    //     return groupIndex !== undefined && groupIndex % 2 === 0
+                    //       ? 'bold' // Make font bold for even-indexed groups (1-based: 2nd, 4th, etc.)
+                    //       : 'inherit'; // Default font weight
+                    //   })(),
+                    // },
                     '&:hover': {
-                      backgroundColor: 'rgba(0, 0, 0, 0.08)', // Light gray hover effect
+                      backgroundColor: 'rgba(0, 0, 0, 0.08)',
                       cursor: 'pointer', // Change cursor to pointer on hover
                     },
                   }}
@@ -350,7 +357,16 @@ function ReferenceTable({
           </Table>
         </TableContainer>
       ) : (
-        <p>Please Select a Library or Search References</p>
+        <Typography
+          variant="body2"
+          sx={{
+            textAlign: 'center',
+            marginTop: 2,
+            color: 'rgba(0, 0, 0, 0.6)',
+          }}
+        >
+          Select a Library or Search References
+        </Typography>
       )}
 
       <ReferenceModal

@@ -70,7 +70,6 @@ function Sidebar({
           '& .MuiDrawer-paper': {
             width: sidebarWidth,
             boxSizing: 'border-box',
-            // position: 'relative',
             top: '64px', // Offset to place below the top bar (height of the AppBar)
           },
         }}
@@ -79,21 +78,17 @@ function Sidebar({
           <Box
             sx={{
               display: 'flex',
-              // justifyContent: 'center', // 'space-between',
               alignItems: 'center',
-              margin: 1,
+              margin: 1.8,
             }}
           >
             <Typography
-              variant="h6"
+              variant="h5"
               component="div"
               sx={{ fontWeight: 'bold' }}
             >
               Libraries
             </Typography>
-            {/* <Button variant="contained" size="small">
-            Add Library
-          </Button> */}
           </Box>
           {/* <Divider /> */}
           <List>
@@ -105,17 +100,26 @@ function Sidebar({
                 selected={selectedItem === item}
                 sx={{
                   '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.08)', // Light gray hover effect
+                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
                   },
                 }}
               >
-                <ListItemText
-                  primary={item.name}
-                  // secondary={`Path: ${item.filePath}`}
-                />
+                <ListItemText primary={item.name} />
               </ListItemButton>
             ))}
           </List>
+          {!(libraries && libraries.length) && (
+            <Typography
+              variant="body2"
+              sx={{
+                textAlign: 'center',
+                marginTop: 2,
+                color: 'rgba(0, 0, 0, 0.6)',
+              }}
+            >
+              Open or Create a Library
+            </Typography>
+          )}
         </Box>
       </Drawer>
       <Box
