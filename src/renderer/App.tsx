@@ -85,9 +85,15 @@ function Home() {
 
   const handleLibraryData = (...args: unknown[]) => {
     const library = args[0] as Library;
+
     setLibraries((prevLibraries) => {
-      if (prevLibraries.length === 0) {
-        return [library];
+      const libraryExists = prevLibraries.some(
+        (lib) => lib.name === library.name || lib.filePath === library.filePath,
+      );
+      if (libraryExists) {
+        setSnackbarMessage('Library already exists');
+        setSnackbarOpen(true);
+        return prevLibraries;
       }
       return [...prevLibraries, library];
     });
