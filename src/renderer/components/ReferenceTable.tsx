@@ -272,7 +272,7 @@ function ReferenceTable({
                 <TableCell>Year</TableCell>
                 <TableCell>Publisher</TableCell>
                 {/* <TableCell>ISSN</TableCell> */}
-                {/* <TableCell>DOI</TableCell> */}
+                <TableCell>DOI</TableCell>
                 <TableCell>URL</TableCell>
                 {/* <TableCell>Keywords</TableCell> */}
                 {/* <TableCell>Abstract</TableCell> */}
@@ -336,6 +336,23 @@ function ReferenceTable({
                   <TableCell>{row.publisher}</TableCell>
                   {/* <TableCell>{row.issn}</TableCell> */}
                   {/* <TableCell>{row.doi}</TableCell> */}
+                  <TableCell>
+                    {row.doi ? (
+                      <Button
+                        variant="text"
+                        color="primary"
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering row click
+                          window.open(row.doi, '_blank', 'noopener,noreferrer'); // Open the URL in a new tab
+                        }}
+                      >
+                        DOI
+                      </Button>
+                    ) : (
+                      'N/A'
+                    )}
+                  </TableCell>
                   {/* <TableCell>{row.url}</TableCell> */}
                   <TableCell>
                     {row.url ? (
@@ -347,7 +364,6 @@ function ReferenceTable({
                           e.stopPropagation(); // Prevent triggering row click
                           window.open(row.url, '_blank', 'noopener,noreferrer'); // Open the URL in a new tab
                         }}
-                        // style={{ textDecoration: 'underline' }}
                       >
                         Link
                       </Button>

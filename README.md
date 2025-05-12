@@ -1,4 +1,4 @@
-<h1> Bibliography manager </h1> 
+<h1> Bibliography Manager </h1> 
 
 <br>
 
