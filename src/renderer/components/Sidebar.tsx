@@ -79,7 +79,7 @@ function Sidebar({
             sx={{
               display: 'flex',
               alignItems: 'center',
-              margin: 1.8,
+              margin: 1.75,
             }}
           >
             <Typography
@@ -100,7 +100,7 @@ function Sidebar({
                 selected={selectedItem === item}
                 sx={{
                   '&:hover': {
-                    backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                    backgroundColor: 'var(--hover-color)',
                   },
                 }}
               >
@@ -114,7 +114,7 @@ function Sidebar({
               sx={{
                 textAlign: 'center',
                 marginTop: 2,
-                color: 'rgba(0, 0, 0, 0.6)',
+                color: 'var(--highlight-color)',
               }}
             >
               Open or Create a Library
@@ -126,7 +126,7 @@ function Sidebar({
         sx={{
           width: '2px',
           cursor: 'col-resize',
-          backgroundColor: 'rgba(0, 0, 0, 0.1)',
+          backgroundColor: 'var(--hover-color)',
           zIndex: 1,
         }}
         onMouseDown={handleMouseDown}

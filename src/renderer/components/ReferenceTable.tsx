@@ -185,7 +185,7 @@ function ReferenceTable({
         {showAddReferencesMessage && selectedLibrary && (
           <Box
             sx={{
-              backgroundColor: 'rgba(0, 123, 255, 0.1)',
+              backgroundColor: 'var(--highlight-color)',
               padding: 1,
               borderRadius: 2, // Slightly rounded corners
               textAlign: 'center',
@@ -287,7 +287,7 @@ function ReferenceTable({
                       showAddReferencesMessage &&
                       row.key &&
                       selectedReferences.has(row)
-                        ? 'rgba(0, 123, 255, 0.1)' // Highlight selected rows
+                        ? 'var(--highlight-color)' // Highlight selected rows
                         : 'inherit',
                     // '& td': {
                     //   fontWeight: (() => {
@@ -300,7 +300,7 @@ function ReferenceTable({
                     //   })(),
                     // },
                     '&:hover': {
-                      backgroundColor: 'rgba(0, 0, 0, 0.08)',
+                      backgroundColor: 'var(--hover-color)',
                       cursor: 'pointer', // Change cursor to pointer on hover
                     },
                   }}

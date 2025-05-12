@@ -1,0 +1,80 @@
+PMID- 34208771
+OWN - NLM
+STAT- PubMed-not-MEDLINE
+LR  - 20240402
+IS  - 1099-4300 (Electronic)
+IS  - 1099-4300 (Linking)
+VI  - 23
+IP  - 6
+DP  - 2021 Jun 16
+TI  - A Two-Steps-Ahead Estimator for Bubble Entropy.
+LID - 10.3390/e23060761 [doi]
+LID - 761
+AB  - Aims: Bubble entropy (bEn) is an entropy metric with a limited dependence on 
+      parameters. bEn does not directly quantify the conditional entropy of the series, 
+      but it assesses the change in entropy of the ordering of portions of its samples 
+      of length m, when adding an extra element. The analytical formulation of bEn for 
+      autoregressive (AR) processes shows that, for this class of processes, the 
+      relation between the first autocorrelation coefficient and bEn changes for odd 
+      and even values of m. While this is not an issue, per se, it triggered ideas for 
+      further investigation. Methods: Using theoretical considerations on the expected 
+      values for AR processes, we examined a two-steps-ahead estimator of bEn, which 
+      considered the cost of ordering two additional samples. We first compared it with 
+      the original bEn estimator on a simulated series. Then, we tested it on real 
+      heart rate variability (HRV) data. Results: The experiments showed that both 
+      examined alternatives showed comparable discriminating power. However, for values 
+      of 10<m<20, where the statistical significance of the method was increased and 
+      improved as m increased, the two-steps-ahead estimator presented slightly higher 
+      statistical significance and more regular behavior, even if the dependence on 
+      parameter m was still minimal. We also investigated a new normalization factor 
+      for bEn, which ensures that bEn&nbsp;=1 when white Gaussian noise (WGN) is given 
+      as the input. Conclusions: The research improved our understanding of bubble 
+      entropy, in particular in the context of HRV analysis, and we investigated 
+      interesting details regarding the definition of the estimator.
+FAU - Manis, George
+AU  - Manis G
+AD  - Department of Computer Science and Engineering, University of Ioannina, 45500 
+      Ioannina, Greece.
+FAU - Bodini, Matteo
+AU  - Bodini M
+AUID- ORCID: 0000-0001-9007-6807
+AD  - Dipartimento di Informatica, Università degli Studi di Milano, 20133 Milan, 
+      Italy.
+FAU - Rivolta, Massimo W
+AU  - Rivolta MW
+AUID- ORCID: 0000-0002-8553-2414
+AD  - Dipartimento di Informatica, Università degli Studi di Milano, 20133 Milan, 
+      Italy.
+FAU - Sassi, Roberto
+AU  - Sassi R
+AD  - Dipartimento di Informatica, Università degli Studi di Milano, 20133 Milan, 
+      Italy.
+LA  - eng
+PT  - Journal Article
+DEP - 20210616
+PL  - Switzerland
+TA  - Entropy (Basel)
+JT  - Entropy (Basel, Switzerland)
+JID - 101243874
+PMC - PMC8235094
+OTO - NOTNLM
+OT  - bubble entropy
+OT  - entropy
+OT  - limited dependence on parameters
+COIS- The authors declare no conflict of interest.
+EDAT- 2021/07/03 06:00
+MHDA- 2021/07/03 06:01
+PMCR- 2021/06/16
+CRDT- 2021/07/02 01:36
+PHST- 2021/05/05 00:00 [received]
+PHST- 2021/06/08 00:00 [revised]
+PHST- 2021/06/13 00:00 [accepted]
+PHST- 2021/07/02 01:36 [entrez]
+PHST- 2021/07/03 06:00 [pubmed]
+PHST- 2021/07/03 06:01 [medline]
+PHST- 2021/06/16 00:00 [pmc-release]
+AID - e23060761 [pii]
+AID - entropy-23-00761 [pii]
+AID - 10.3390/e23060761 [doi]
+PST - epublish
+SO  - Entropy (Basel). 2021 Jun 16;23(6):761. doi: 10.3390/e23060761.

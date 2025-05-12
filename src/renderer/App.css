@@ -48,3 +48,8 @@ a:hover {
   opacity: 1;
   text-decoration: none;
 }
+
+:root {
+  --hover-color: rgba(0, 0, 0, 0.08);
+  --highlight-color: rgba(0, 123, 255, 0.1);
+}
