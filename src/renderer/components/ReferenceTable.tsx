@@ -261,6 +261,7 @@ function ReferenceTable({
           <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
             <TableHead>
               <TableRow>
+                <TableCell>Key</TableCell>
                 <TableCell>Type</TableCell>
                 <TableCell>Title</TableCell>
                 <TableCell>Author</TableCell>
@@ -270,7 +271,7 @@ function ReferenceTable({
                 <TableCell>Pages</TableCell>
                 <TableCell>Year</TableCell>
                 <TableCell>Publisher</TableCell>
-                <TableCell>ISSN</TableCell>
+                {/* <TableCell>ISSN</TableCell> */}
                 {/* <TableCell>DOI</TableCell> */}
                 <TableCell>URL</TableCell>
                 {/* <TableCell>Keywords</TableCell> */}
@@ -306,6 +307,24 @@ function ReferenceTable({
                   }}
                   onClick={() => handleRowClick(row)}
                 >
+                  <TableCell>{row.key}</TableCell>
+                  {/* <TableCell>
+                    {row.key ? (
+                      <Button
+                        variant="text"
+                        color="primary"
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering row click
+                          navigator.clipboard.writeText(row.key ?? ''); // Copy row.key to clipboard
+                        }}
+                      >
+                        {row.key}
+                      </Button>
+                    ) : (
+                      'N/A'
+                    )}
+                  </TableCell> */}
                   <TableCell>{row.entryType}</TableCell>
                   <TableCell>{row.title}</TableCell>
                   <TableCell>{row.author}</TableCell>
@@ -315,20 +334,23 @@ function ReferenceTable({
                   <TableCell>{row.pages}</TableCell>
                   <TableCell>{row.year}</TableCell>
                   <TableCell>{row.publisher}</TableCell>
-                  <TableCell>{row.issn}</TableCell>
+                  {/* <TableCell>{row.issn}</TableCell> */}
                   {/* <TableCell>{row.doi}</TableCell> */}
                   {/* <TableCell>{row.url}</TableCell> */}
                   <TableCell>
                     {row.url ? (
-                      <a
-                        href={row.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        style={{ textDecoration: 'underline', color: 'blue' }}
-                        onClick={(e) => e.stopPropagation()} // Prevent triggering row click
+                      <Button
+                        variant="text"
+                        color="primary"
+                        size="small"
+                        onClick={(e) => {
+                          e.stopPropagation(); // Prevent triggering row click
+                          window.open(row.url, '_blank', 'noopener,noreferrer'); // Open the URL in a new tab
+                        }}
+                        // style={{ textDecoration: 'underline' }}
                       >
                         Link
-                      </a>
+                      </Button>
                     ) : (
                       'N/A'
                     )}
@@ -340,6 +362,7 @@ function ReferenceTable({
                       <Button
                         variant="text"
                         color="primary"
+                        size="small"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent triggering row click
                           handleOpenFile(row.linkedFilePath);
