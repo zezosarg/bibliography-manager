@@ -38,9 +38,15 @@ function ReferenceModal({
 
   const handleSave = () => {
     if (reference) {
+      const referenceId = reference.id;
       const lib = Library.parseString(bibTeXString, 'lib.bib');
       const updatedReference = lib.references[0];
+      updatedReference.id = referenceId;
       onSave(updatedReference);
+
+      // Merge original reference properties to preserve any missing fields?
+      // const mergedReference = { ...reference, ...updatedReference };
+      // onSave(mergedReference);
     }
   };
 

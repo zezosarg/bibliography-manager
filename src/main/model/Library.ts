@@ -5,6 +5,8 @@ import Reference from './Reference';
 const bibtexParse = require('bibtex-parse');
 
 export default class Library {
+  // id: string;
+
   name: string;
 
   references: Reference[];
@@ -12,6 +14,7 @@ export default class Library {
   filePath: string;
 
   constructor(filePath: string, name?: string, references: Reference[] = []) {
+    // this.id = crypto.randomUUID();
     this.name = name || path.basename(filePath);
     this.references = references;
     this.filePath = filePath;

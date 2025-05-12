@@ -97,7 +97,8 @@ function Home() {
       }
       return [...prevLibraries, library];
     });
-    // setSelectedLibrary(library); // Select the last library
+    setSelectedLibrary(library);
+    setSelectedItem(library);
   };
 
   const loadLibraries = async () => {
@@ -105,6 +106,10 @@ function Home() {
       const loadedLibraries =
         await window.electron.ipcRenderer.invoke('load-libraries');
       setLibraries(loadedLibraries);
+      if (loadedLibraries.length > 0) {
+        setSelectedLibrary(loadedLibraries[0]);
+        setSelectedItem(loadedLibraries[0]);
+      }
     } catch (error) {
       console.error('Failed to load libraries:', error);
     }

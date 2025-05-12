@@ -51,5 +51,6 @@ a:hover {
 
 :root {
   --hover-color: rgba(0, 0, 0, 0.08);
-  --highlight-color: rgba(0, 123, 255, 0.15);
+  --highlight-color: rgba(0, 123, 255, 0.11);
+  --help-color: rgba(0, 0, 0, 0.6)
 }

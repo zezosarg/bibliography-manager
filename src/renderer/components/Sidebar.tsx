@@ -114,7 +114,7 @@ function Sidebar({
               sx={{
                 textAlign: 'center',
                 marginTop: 2,
-                color: 'var(--highlight-color)',
+                color: 'var(--help-color)',
               }}
             >
               Open or Create a Library

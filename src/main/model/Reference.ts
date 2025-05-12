@@ -1,7 +1,9 @@
 // BibTexReference class to represent an individual BibTeX entry
 
 export default class Reference {
-  key?: string; // Unique key for the BibTeX entry
+  id: string;
+
+  key?: string;
 
   entryType?: string;
 
@@ -37,6 +39,7 @@ export default class Reference {
   metadata: Record<string, any>;
 
   constructor(
+    id?: string,
     key?: string,
     entryType?: string,
     title?: string,
@@ -55,6 +58,7 @@ export default class Reference {
     linkedFilePath?: string,
     metadata: Record<string, any> = {},
   ) {
+    this.id = id || crypto.randomUUID();
     this.key = key || this.generateKey();
     this.entryType = entryType;
     this.title = title;

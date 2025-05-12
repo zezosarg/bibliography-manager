@@ -73,18 +73,15 @@ function ReferenceTable({
   };
 
   const handleSaveReference = (updatedReference: Reference) => {
-    if (updatedReference.key === 'unauthoredundateduntitled') {
-      updatedReference.key = updatedReference.generateKey();
-    }
     if (selectedLibrary) {
       const referenceExists = selectedLibrary.references.some(
-        (ref) => ref.key === updatedReference.key,
+        (ref) => ref.id === updatedReference.id,
       );
       if (!referenceExists) {
         selectedLibrary.references.push(updatedReference);
       }
       const updatedReferences = selectedLibrary.references.map((ref) =>
-        ref.key === updatedReference.key ? updatedReference : ref,
+        ref.id === updatedReference.id ? updatedReference : ref,
       );
       const updatedLibrary = new Library(
         selectedLibrary.filePath,
@@ -99,7 +96,7 @@ function ReferenceTable({
   const handleDeleteReference = () => {
     if (selectedLibrary) {
       const updatedReferences = selectedLibrary.references.filter(
-        (ref) => ref.key !== selectedReference?.key,
+        (ref) => ref.id !== selectedReference?.id,
       );
       const updatedLibrary = new Library(
         selectedLibrary.filePath,
@@ -143,7 +140,7 @@ function ReferenceTable({
         ...selectedRefs.filter(
           (ref) =>
             !libraryToAddRefs.references.some(
-              (existingRef) => existingRef.key === ref.key,
+              (existingRef) => existingRef.id === ref.id,
             ),
         ),
       ];
@@ -282,11 +279,11 @@ function ReferenceTable({
             <TableBody>
               {selectedLibrary.references.map((row) => (
                 <TableRow
-                  key={row.key}
+                  key={row.id}
                   sx={{
                     backgroundColor:
                       showAddReferencesMessage &&
-                      row.key &&
+                      row.id &&
                       selectedReferences.has(row)
                         ? 'var(--highlight-color)' // Highlight selected rows
                         : 'inherit',
@@ -401,7 +398,7 @@ function ReferenceTable({
           sx={{
             textAlign: 'center',
             marginTop: 2,
-            color: 'rgba(0, 0, 0, 0.6)',
+            color: 'var(--help-color)',
           }}
         >
           Select a Library or Search References
