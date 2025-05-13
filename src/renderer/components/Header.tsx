@@ -77,6 +77,7 @@ function Header({ onSearch, onFindDuplicates }: HeaderProps) {
               <MenuItem value="year">Year</MenuItem>
               <MenuItem value="journal">Journal</MenuItem>
               <MenuItem value="publisher">Publisher</MenuItem>
+              <MenuItem value="key">Key</MenuItem>
             </Select>
           </FormControl>
         </Box>

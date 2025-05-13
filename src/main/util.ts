@@ -48,7 +48,7 @@ export function openFileDialog(fileTypes: string[]) {
 }
 
 export async function handleFilePick(mainWindow: BrowserWindow) {
-  const result = await openFileDialog(['bib', 'ris']);
+  const result = await openFileDialog(['bib', 'ris', 'nbib']);
 
   if (!result.canceled && result.filePaths.length > 0) {
     const filePath = result.filePaths[0];

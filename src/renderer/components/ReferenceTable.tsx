@@ -270,7 +270,7 @@ function ReferenceTable({
                 <TableCell>Publisher</TableCell>
                 {/* <TableCell>ISSN</TableCell> */}
                 <TableCell>DOI</TableCell>
-                <TableCell>URL</TableCell>
+                {/* <TableCell>URL</TableCell> */}
                 {/* <TableCell>Keywords</TableCell> */}
                 {/* <TableCell>Abstract</TableCell> */}
                 <TableCell>File</TableCell>
@@ -341,17 +341,22 @@ function ReferenceTable({
                         size="small"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent triggering row click
-                          window.open(row.doi, '_blank', 'noopener,noreferrer'); // Open the URL in a new tab
+                          const doiUrl = (row.doi ?? '').startsWith(
+                            'https://doi.org/',
+                          )
+                            ? row.doi
+                            : `https://doi.org/${row.doi}`;
+                          window.open(doiUrl, '_blank', 'noopener,noreferrer'); // Open the URL in a new tab
                         }}
                       >
-                        DOI
+                        WEB
                       </Button>
                     ) : (
                       'N/A'
                     )}
                   </TableCell>
                   {/* <TableCell>{row.url}</TableCell> */}
-                  <TableCell>
+                  {/* <TableCell>
                     {row.url ? (
                       <Button
                         variant="text"
@@ -367,7 +372,7 @@ function ReferenceTable({
                     ) : (
                       'N/A'
                     )}
-                  </TableCell>
+                  </TableCell> */}
                   {/* <TableCell>{row.keywords}</TableCell> */}
                   {/* <TableCell>{row.abstract}</TableCell> */}
                   <TableCell>
