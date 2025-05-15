@@ -31,7 +31,18 @@ export default class Library {
       return Library.parseBibTeXString(fileContent, filePath);
     }
     if (fileExtension === '.ris') {
-      return Library.parseRisString(fileContent, filePath);
+      const library = Library.parseRisString(fileContent, filePath);
+      const bibFilePath = filePath.replace(/\.ris$/, '.bib');
+      library.filePath = bibFilePath;
+      library.name = path.basename(bibFilePath);
+      return library;
+    }
+    if (fileExtension === '.nbib') {
+      const library = Library.parseNbibString(fileContent, filePath);
+      const bibFilePath = filePath.replace(/\.nbib$/, '.bib');
+      library.filePath = bibFilePath;
+      library.name = path.basename(bibFilePath);
+      return library;
     }
     throw new Error(`Unsupported file format: ${fileExtension}`);
   }
@@ -168,5 +179,86 @@ export default class Library {
     });
 
     return library;
+  }
+
+  static parseNbibString(nbibFile: string, filePath: string): Library {
+    const lines = nbibFile.split(/\r?\n/);
+    const library = new Library(filePath);
+    let currentEntry: Record<string, any> = {};
+
+    lines.forEach((line) => {
+      console.log('line: ', line);
+      const match = line.match(/^([A-Z]{2,4})-?\s+-?\s*(.+)$/);
+      console.log('match: ', match);
+      if (match) {
+        const [_, key, value] = match;
+        if (key === 'PMID') {
+          if (Object.keys(currentEntry).length > 0) {
+            const reference =
+              Library.createReferenceFromNbibEntry(currentEntry);
+            library.references.push(reference);
+            currentEntry = {};
+          }
+          currentEntry[key] = value;
+        } else if (key === 'AU' || key === 'MH') {
+          currentEntry[key] = currentEntry[key] || [];
+          currentEntry[key].push(value);
+        } else {
+          currentEntry[key] = value;
+        }
+      }
+    });
+
+    if (Object.keys(currentEntry).length > 0) {
+      const reference = Library.createReferenceFromNbibEntry(currentEntry);
+      library.references.push(reference);
+    }
+
+    return library;
+  }
+
+  private static createReferenceFromNbibEntry(
+    entry: Record<string, any>,
+  ): Reference {
+    const metadata: Record<string, any> = {};
+    Object.entries(entry).forEach(([key, value]) => {
+      if (
+        ![
+          'PMID',
+          'TI',
+          'AU',
+          'TA',
+          'VI',
+          'IP',
+          'PG',
+          'DP',
+          'PL',
+          'IS',
+          'LID',
+          'AB',
+          'MH',
+        ].includes(key)
+      ) {
+        metadata[key] = value;
+      }
+    });
+
+    return Object.assign(new Reference(), {
+      key: entry.PMID,
+      entryType: 'article',
+      title: entry.TI,
+      author: entry.AU ? entry.AU.join(', ') : '',
+      journal: entry.TA,
+      volume: entry.VI,
+      number: entry.IP,
+      pages: entry.PG,
+      year: entry.DP,
+      publisher: entry.PL,
+      issn: entry.IS,
+      doi: entry.LID,
+      abstract: entry.AB,
+      keywords: entry.MH ? entry.MH.join(', ') : '',
+      metadata,
+    });
   }
 }

@@ -36,10 +36,30 @@ function ReferenceModal({
     setBibTeXString(event.target.value);
   };
 
+  const detectFileType = (fileContent: string) => {
+    const trimmedContent = fileContent.trim();
+
+    if (trimmedContent.startsWith('@')) {
+      return 'lib.bib'; // BibTeX files start with '@'
+    }
+    if (trimmedContent.startsWith('TY')) {
+      return 'lib.ris'; // RIS files always start with the 'TY' tag
+    }
+    if (
+      trimmedContent.startsWith('PMID') ||
+      trimmedContent.startsWith('TI') ||
+      trimmedContent.startsWith('FAU')
+    ) {
+      return 'lib.nbib'; // NBIB files may start with 'PMID', 'TI', or 'FAU'
+    }
+    throw new Error('Unable to detect file type from content');
+  };
+
   const handleSave = () => {
     if (reference) {
       const referenceId = reference.id;
-      const lib = Library.parseString(bibTeXString, 'lib.bib');
+      const fileType = detectFileType(bibTeXString);
+      const lib = Library.parseString(bibTeXString, fileType);
       const updatedReference = lib.references[0];
       updatedReference.id = referenceId;
       onSave(updatedReference);

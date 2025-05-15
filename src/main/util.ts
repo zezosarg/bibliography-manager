@@ -55,12 +55,7 @@ export async function handleFilePick(mainWindow: BrowserWindow) {
     try {
       const bibFile = fs.readFileSync(filePath, 'utf8');
       const library = Library.parseString(bibFile, filePath);
-      if (path.extname(filePath).toLowerCase() === '.ris') {
-        const bibFilePath = filePath.replace(/\.ris$/, '.bib');
-        fs.writeFileSync(bibFilePath, library.listReferences(), 'utf8');
-        library.filePath = bibFilePath;
-        library.name = path.basename(bibFilePath);
-      }
+      fs.writeFileSync(library.filePath, library.listReferences(), 'utf8');
       updatePathsFile(library, 'add');
       mainWindow.webContents.send('open-library', library);
     } catch (error) {
