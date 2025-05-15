@@ -95,11 +95,7 @@ function ReferenceModal({
         >
           <span>Edit Reference</span>
           <Box sx={{ display: 'flex', gap: 1 }}>
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleLinkFile}
-            >
+            <Button variant="contained" color="info" onClick={handleLinkFile}>
               Link File
             </Button>
             <Button variant="contained" color="inherit" onClick={onDelete}>
@@ -118,10 +114,10 @@ function ReferenceModal({
         />
       </DialogContent>
       <DialogActions>
-        <Button onClick={onClose} color="primary">
+        <Button onClick={onClose} color="info">
           Cancel
         </Button>
-        <Button onClick={handleSave} variant="contained" color="primary">
+        <Button onClick={handleSave} variant="contained" color="info">
           Save
         </Button>
       </DialogActions>

@@ -23,7 +23,7 @@ function Sidebar({
   selectedItem,
   setSelectedItem,
 }: SidebarProps) {
-  const [sidebarWidth, setSidebarWidth] = useState(150); // Initial width of the sidebar
+  const [sidebarWidth, setSidebarWidth] = useState(150); // Initial width
   const [isResizing, setIsResizing] = useState(false);
 
   const handleMouseDown = () => {
@@ -32,7 +32,7 @@ function Sidebar({
 
   const handleMouseMove = (e: MouseEvent) => {
     if (isResizing) {
-      const newWidth = Math.max(100, e.clientX); // Minimum width of 100px
+      const newWidth = Math.max(10, e.clientX); // Minimum width
       setSidebarWidth(newWidth);
     }
   };

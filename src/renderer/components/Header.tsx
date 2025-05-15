@@ -32,7 +32,7 @@ function Header({ onSearch, onFindDuplicates }: HeaderProps) {
     setSearchField(field);
   };
   return (
-    <AppBar position="fixed">
+    <AppBar position="fixed" color="info">
       <Toolbar>
         <img
           src={icon}

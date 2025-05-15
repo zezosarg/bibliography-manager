@@ -201,7 +201,7 @@ function ReferenceTable({
               <>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="info"
                   onClick={handleAddReferences}
                   sx={{ marginLeft: 'auto' }}
                 >
@@ -209,7 +209,7 @@ function ReferenceTable({
                 </Button>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="info"
                   onClick={handleNewReference}
                 >
                   New Reference
@@ -228,7 +228,7 @@ function ReferenceTable({
               <>
                 <Button
                   variant="contained"
-                  color="primary"
+                  color="info"
                   onClick={handleAddSelected}
                 >
                   Add Selected
@@ -309,7 +309,7 @@ function ReferenceTable({
                     {row.key ? (
                       <Button
                         variant="text"
-                        color="primary"
+                        color="info"
                         size="small"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent triggering row click
@@ -337,7 +337,7 @@ function ReferenceTable({
                     {row.doi ? (
                       <Button
                         variant="text"
-                        color="primary"
+                        color="info"
                         size="small"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent triggering row click
@@ -360,7 +360,7 @@ function ReferenceTable({
                     {row.url ? (
                       <Button
                         variant="text"
-                        color="primary"
+                        color="info"
                         size="small"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent triggering row click
@@ -379,7 +379,7 @@ function ReferenceTable({
                     {row.linkedFilePath ? (
                       <Button
                         variant="text"
-                        color="primary"
+                        color="info"
                         size="small"
                         onClick={(e) => {
                           e.stopPropagation(); // Prevent triggering row click
