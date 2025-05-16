@@ -7,6 +7,7 @@ import {
   TextField,
   Button,
   Box,
+  Typography,
 } from '@mui/material';
 import Reference from '../../main/model/Reference';
 import Library from '../../main/model/Library';
@@ -94,6 +95,16 @@ function ReferenceModal({
           }}
         >
           <span>Edit Reference</span>
+          <Typography
+            variant="body2"
+            sx={{
+              textAlign: 'center',
+              marginTop: 2,
+              color: 'var(--help-color)',
+            }}
+          >
+            You can paste BibTeX, RIS, or NBIB formatted references here.
+          </Typography>
           <Box sx={{ display: 'flex', gap: 1 }}>
             <Button variant="contained" color="info" onClick={handleLinkFile}>
               Link File
