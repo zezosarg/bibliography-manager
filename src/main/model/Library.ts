@@ -5,8 +5,6 @@ import Reference from './Reference';
 const bibtexParse = require('bibtex-parse');
 
 export default class Library {
-  // id: string;
-
   name: string;
 
   references: Reference[];
@@ -14,7 +12,6 @@ export default class Library {
   filePath: string;
 
   constructor(filePath: string, name?: string, references: Reference[] = []) {
-    // this.id = crypto.randomUUID();
     this.name = name || path.basename(filePath);
     this.references = references;
     this.filePath = filePath;
@@ -152,27 +149,6 @@ export default class Library {
           }
         });
 
-        // const reference = Object.assign(new Reference(), {
-        //   entryType: currentEntry.entryType?.toLowerCase(),
-        //   title: currentEntry.T1,
-        //   author: currentEntry[authorKey]
-        //     ? currentEntry[authorKey].join(', ')
-        //     : '',
-        //   journal: currentEntry.JO,
-        //   volume: currentEntry.VL,
-        //   number: currentEntry.IS,
-        //   pages: currentEntry.EP
-        //     ? `${currentEntry.SP}-${currentEntry.EP}`
-        //     : currentEntry.SP,
-        //   year: currentEntry.Y1 || currentEntry.PY,
-        //   publisher: currentEntry.PB,
-        //   issn: currentEntry.SN,
-        //   doi: currentEntry.DO,
-        //   url: currentEntry.UR,
-        //   abstract: currentEntry.AB,
-        //   keywords: currentEntry.KW ? currentEntry.KW.join(', ') : '',
-        //   metadata,
-        // });
         const reference = new Reference(
           undefined, // id will be auto-generated
           undefined, // key will be auto-generated or set later
@@ -263,24 +239,6 @@ export default class Library {
       }
     });
 
-    // return Object.assign(new Reference(), {
-    //   key: entry.PMID,
-    //   entryType: 'article',
-    //   title: entry.TI,
-    //   author: entry.AU ? entry.AU.join(', ') : '',
-    //   journal: entry.TA,
-    //   volume: entry.VI,
-    //   number: entry.IP,
-    //   pages: entry.PG,
-    //   year: entry.DP ? entry.DP.match(/\d{4}/)?.[0] : undefined,
-    //   publisher: entry.PL,
-    //   issn: entry.IS,
-    //   doi: entry.AID ? entry.AID.replace(/\s*\[doi\]$/, '') : undefined,
-    //   abstract: entry.AB,
-    //   keywords: entry.MH ? entry.MH.join(', ') : '',
-    //   metadata,
-    // });
-
     return new Reference(
       undefined, // id will be auto-generated
       entry.PMID, // key
@@ -290,7 +248,7 @@ export default class Library {
       entry.TA, // journal
       entry.VI, // volume
       entry.IP, // number
-      entry.PG, // pages
+      entry.PG ? entry.PG : entry.AID?.match(/\/([^\/\s\[]+)(?=\s|\[|$)/)?.[1], // pages
       entry.DP ? entry.DP.match(/\d{4}/)?.[0] : undefined, // year
       entry.PL, // publisher
       entry.IS, // issn
