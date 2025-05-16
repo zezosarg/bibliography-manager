@@ -59,7 +59,6 @@ export default class Reference {
     metadata: Record<string, any> = {},
   ) {
     this.id = id || crypto.randomUUID();
-    this.key = key || this.generateKey();
     this.entryType = entryType;
     this.title = title;
     this.author = author;
@@ -76,13 +75,14 @@ export default class Reference {
     this.abstract = abstract;
     this.linkedFilePath = linkedFilePath;
     this.metadata = metadata;
+    this.key = key || this.generateKey();
   }
 
   generateKey(): string {
     const authorLastName =
-      this.author?.split(',')[0]?.trim().toLowerCase() || 'unauthored';
+      this.author?.split(',')[0]?.trim().toUpperCase() || 'unauthored';
     const yearPart = this.year?.toString() || 'undated';
-    const titlePart = this.title?.split(' ')[0]?.toLowerCase() || 'untitled';
+    const titlePart = this.title?.split(' ')[0]?.toUpperCase() || 'untitled';
     return `${authorLastName}${yearPart}${titlePart}`;
   }
 

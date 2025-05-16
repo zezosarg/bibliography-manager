@@ -37,6 +37,8 @@ function Home() {
       setSelectedLibrary(library);
       setSelectedItem(library);
     } catch (error) {
+      setSnackbarMessage('Failed to save library');
+      setSnackbarOpen(true);
       console.error('Failed to save library:', error);
       throw error;
     }
@@ -91,9 +93,13 @@ function Home() {
         (lib) => lib.name === library.name || lib.filePath === library.filePath,
       );
       if (libraryExists) {
-        setSnackbarMessage('Library already exists');
+        setSnackbarMessage(`Library ${library.name} overwritten`);
         setSnackbarOpen(true);
-        return prevLibraries;
+        return prevLibraries.map((lib) =>
+          lib.name === library.name || lib.filePath === library.filePath
+            ? library
+            : lib,
+        );
       }
       return [...prevLibraries, library];
     });
