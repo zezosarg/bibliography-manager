@@ -167,6 +167,26 @@ function Home() {
     }
   };
 
+  const handleMenuAction = (action: string) => {
+    if (selectedLibrary) {
+      const references = selectedLibrary.references.map((ref) => {
+        return Object.assign(new Reference(), ref);
+      }); // rehydrate references
+      const library = new Library(
+        selectedLibrary.filePath,
+        selectedLibrary.name,
+        references,
+      ); // rehydrate library
+      const text = Library.exportString(library, action);
+      window.electron.ipcRenderer.sendMessage('copy-to-clipboard', text);
+      setSnackbarMessage(`Library copied to clipboard as ${action}`);
+      setSnackbarOpen(true);
+    } else {
+      setSnackbarMessage('No library selected to export');
+      setSnackbarOpen(true);
+    }
+  };
+
   useEffect(() => {
     loadLibraries();
     window.electron.ipcRenderer.on('open-library', handleLibraryData);
@@ -178,7 +198,11 @@ function Home() {
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
-      <Header onSearch={handleSearch} onFindDuplicates={handleFindDuplicates} />
+      <Header
+        onSearch={handleSearch}
+        onFindDuplicates={handleFindDuplicates}
+        onHandleMenuAction={handleMenuAction}
+      />
       <Sidebar
         onRecordClick={handleRecordClick}
         libraries={libraries}

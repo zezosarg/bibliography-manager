@@ -18,9 +18,14 @@ import icon from '../../../assets/icon.png';
 interface HeaderProps {
   onSearch: (query: string, searchField: string) => void;
   onFindDuplicates: () => void;
+  onHandleMenuAction: (action: string) => void;
 }
 
-function Header({ onSearch, onFindDuplicates }: HeaderProps) {
+function Header({
+  onSearch,
+  onFindDuplicates,
+  onHandleMenuAction,
+}: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchField, setSearchField] = useState('all');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -31,11 +36,6 @@ function Header({ onSearch, onFindDuplicates }: HeaderProps) {
   };
   const handleMenuClose = () => {
     setAnchorEl(null);
-  };
-
-  const handleMenuAction = (action: string) => {
-    // Add your menu action logic here
-    handleMenuClose();
   };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,16 +59,6 @@ function Header({ onSearch, onFindDuplicates }: HeaderProps) {
             marginRight: 16,
           }}
         />
-        <Box sx={{ flexGrow: 1 }} />
-        <div>
-          <Button color="info" variant="contained" onClick={handleMenuClick}>
-            Copy to clipboard
-          </Button>
-          <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
-            <MenuItem onClick={() => handleMenuAction('html')}>HTML</MenuItem>
-            <MenuItem onClick={() => handleMenuAction('text')}>TEXT</MenuItem>
-          </Menu>
-        </div>
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <TextField
@@ -109,9 +99,32 @@ function Header({ onSearch, onFindDuplicates }: HeaderProps) {
           </FormControl>
         </Box>
         <Box sx={{ flexGrow: 1 }} />
-        <Button color="info" variant="contained" onClick={onFindDuplicates}>
-          Find Duplicates
-        </Button>
+        <Box sx={{ display: 'flex', gap: 1 }}>
+          <Button color="info" variant="contained" onClick={handleMenuClick}>
+            Export to clipboard
+          </Button>
+          <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
+            <MenuItem
+              onClick={() => {
+                onHandleMenuAction('bib');
+                handleMenuClose(); // Close the menu
+              }}
+            >
+              BibTeX
+            </MenuItem>
+            <MenuItem
+              onClick={() => {
+                onHandleMenuAction('html');
+                handleMenuClose(); // Close the menu
+              }}
+            >
+              HTML
+            </MenuItem>
+          </Menu>
+          <Button color="info" variant="contained" onClick={onFindDuplicates}>
+            Find Duplicates
+          </Button>
+        </Box>
       </Toolbar>
     </AppBar>
   );

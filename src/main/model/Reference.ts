@@ -112,4 +112,26 @@ export default class Reference {
     bibtex += `}`;
     return bibtex;
   }
+
+  toHtmlString(): string {
+    const authors =
+      this.author
+        ?.split(' and ')
+        .map((name) => {
+          const [lastName, firstName] = name.split(',').map((s) => s.trim());
+          return `${lastName}, ${firstName.charAt(0)}.`;
+        })
+        .join(', &#38; ') || 'Unknown Author';
+
+    const journal = this.journal ? `<i>${this.journal}</i>` : '';
+    const volume = this.volume ? `<i>${this.volume}</i>` : '';
+    const number = this.number ? `(${this.number})` : '';
+    const pages = this.pages ? `, ${this.pages.replace('-', '–')}` : '';
+    const doi = this.doi ? `https://doi.org/${this.doi}` : '';
+
+    return `
+      <div data-csl-entry-id="${this.id}" className="csl-entry">
+          ${authors} (${this.year}). ${this.title}. ${journal}, ${volume} ${number}${pages}. ${doi}
+      </div>`;
+  }
 }

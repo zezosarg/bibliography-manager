@@ -9,7 +9,7 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, ipcMain, shell } from 'electron';
+import { app, BrowserWindow, ipcMain, shell, clipboard } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
 import {
@@ -49,6 +49,10 @@ ipcMain.on('open-file', async (event, arg) => {
 
 ipcMain.on('remove-library', async (event, arg) => {
   updatePathsFile(arg, 'remove');
+});
+
+ipcMain.on('copy-to-clipboard', async (event, arg) => {
+  clipboard.writeText(arg);
 });
 
 if (process.env.NODE_ENV === 'production') {

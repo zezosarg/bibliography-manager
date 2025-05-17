@@ -262,15 +262,21 @@ export default class Library {
   }
 
   static exportString(library: Library, format: string): string {
-    if (format === 'bibtex') {
+    if (format === 'bib') {
       return library.listReferences();
     }
-    if (format === 'ris') {
-      return library.toRisString();
-    }
-    if (format === 'nbib') {
-      return library.toNbibString();
+    if (format === 'html') {
+      return library.toHtmlString();
     }
     throw new Error(`Unsupported export format: ${format}`);
+  }
+
+  toHtmlString(): string {
+    return this.references
+      .map((ref) => {
+        const html = ref.toHtmlString();
+        return `<div class="csl-bib-body">${html}</div>`;
+      })
+      .join('\n');
   }
 }
