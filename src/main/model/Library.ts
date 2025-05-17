@@ -260,4 +260,17 @@ export default class Library {
       metadata,
     );
   }
+
+  static exportString(library: Library, format: string): string {
+    if (format === 'bibtex') {
+      return library.listReferences();
+    }
+    if (format === 'ris') {
+      return library.toRisString();
+    }
+    if (format === 'nbib') {
+      return library.toNbibString();
+    }
+    throw new Error(`Unsupported export format: ${format}`);
+  }
 }

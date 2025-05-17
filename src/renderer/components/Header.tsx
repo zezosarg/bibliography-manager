@@ -10,8 +10,10 @@ import {
   Select,
   MenuItem,
   SelectChangeEvent,
+  Menu,
 } from '@mui/material';
 import icon from '../../../assets/icon.png';
+// import SplitButton from './SplitButton';
 
 interface HeaderProps {
   onSearch: (query: string, searchField: string) => void;
@@ -21,6 +23,20 @@ interface HeaderProps {
 function Header({ onSearch, onFindDuplicates }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchField, setSearchField] = useState('all');
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+  const open = Boolean(anchorEl);
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLButtonElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleMenuClose = () => {
+    setAnchorEl(null);
+  };
+
+  const handleMenuAction = (action: string) => {
+    // Add your menu action logic here
+    handleMenuClose();
+  };
 
   const handleSearchChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const query = event.target.value;
@@ -44,6 +60,16 @@ function Header({ onSearch, onFindDuplicates }: HeaderProps) {
           }}
         />
         <Box sx={{ flexGrow: 1 }} />
+        <div>
+          <Button color="info" variant="contained" onClick={handleMenuClick}>
+            Copy to clipboard
+          </Button>
+          <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
+            <MenuItem onClick={() => handleMenuAction('html')}>HTML</MenuItem>
+            <MenuItem onClick={() => handleMenuAction('text')}>TEXT</MenuItem>
+          </Menu>
+        </div>
+        <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <TextField
             variant="outlined"
@@ -55,6 +81,7 @@ function Header({ onSearch, onFindDuplicates }: HeaderProps) {
           />
           <FormControl
             variant="outlined"
+            // color="inherit"
             size="small"
             sx={{
               minWidth: 150,
@@ -82,7 +109,7 @@ function Header({ onSearch, onFindDuplicates }: HeaderProps) {
           </FormControl>
         </Box>
         <Box sx={{ flexGrow: 1 }} />
-        <Button color="inherit" onClick={onFindDuplicates}>
+        <Button color="info" variant="contained" onClick={onFindDuplicates}>
           Find Duplicates
         </Button>
       </Toolbar>
