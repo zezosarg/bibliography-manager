@@ -11,6 +11,7 @@ import {
   MenuItem,
   SelectChangeEvent,
   Menu,
+  Typography,
 } from '@mui/material';
 import icon from '../../../assets/icon.png';
 // import SplitButton from './SplitButton';
@@ -59,6 +60,13 @@ function Header({
             marginRight: 16,
           }}
         />
+        <Typography
+          variant="h6"
+          component="div"
+          sx={{ flexGrow: 0, marginRight: 2 }}
+        >
+          Bibliography Manager
+        </Typography>
         <Box sx={{ flexGrow: 1 }} />
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
           <TextField
