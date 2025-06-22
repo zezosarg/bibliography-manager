@@ -9,14 +9,13 @@ import {
   Box,
   Typography,
 } from '@mui/material';
-import Reference from '../../main/model/Reference';
-import Library from '../../main/model/Library';
+import { IReference } from '../../types/IReference';
 
 interface ReferenceModalProps {
   open: boolean;
-  reference: Reference | null;
+  reference: IReference | null;
   onClose: () => void;
-  onSave: (updatedReference: Reference) => void;
+  onSave: (updatedReference: IReference) => void;
   onDelete: () => void;
 }
 
@@ -30,58 +29,39 @@ function ReferenceModal({
   const [bibTeXString, setBibTeXString] = useState('');
 
   useEffect(() => {
-    setBibTeXString(reference?.toBibTeXString() || '');
+    const fetchConvertedRef = async () => {
+      const convertedRef = await window.electron.ipcRenderer.invoke(
+        'convert-reference',
+        reference,
+      );
+      setBibTeXString(convertedRef);
+    };
+    if (reference) {
+      fetchConvertedRef();
+    }
   }, [reference]);
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setBibTeXString(event.target.value);
   };
 
-  const detectFileType = (fileContent: string) => {
-    const trimmedContent = fileContent.trim();
-
-    if (trimmedContent.startsWith('@')) {
-      return 'lib.bib'; // BibTeX files start with '@'
-    }
-    if (trimmedContent.startsWith('TY')) {
-      return 'lib.ris'; // RIS files always start with the 'TY' tag
-    }
-    if (
-      trimmedContent.startsWith('PMID') ||
-      trimmedContent.startsWith('TI') ||
-      trimmedContent.startsWith('FAU')
-    ) {
-      return 'lib.nbib'; // NBIB files may start with 'PMID', 'TI', or 'FAU'
-    }
-    throw new Error('Unable to detect file type from content');
-  };
-
-  const handleSave = () => {
-    if (reference) {
-      const referenceId = reference.id;
-      const fileType = detectFileType(bibTeXString);
-      const lib = Library.parseString(bibTeXString, fileType);
-      const updatedReference = lib.references[0];
-      updatedReference.id = referenceId;
-      onSave(updatedReference);
-
-      // Merge original reference properties to preserve any missing fields?
-      // const mergedReference = { ...reference, ...updatedReference };
-      // onSave(mergedReference);
-    }
+  const handleSave = async () => {
+    if (!reference) return;
+    const updatedReference = await window.electron.ipcRenderer.invoke(
+      'update-reference',
+      reference,
+      bibTeXString,
+    );
+    onSave(updatedReference);
   };
 
   const handleLinkFile = async () => {
     if (!reference) return;
-
-    const { filePaths, canceled } =
-      await window.electron.ipcRenderer.invoke('open-file-dialog');
-
-    if (!canceled && filePaths.length > 0) {
-      const linkedFilePath = filePaths[0];
-      reference.linkedFilePath = linkedFilePath;
-      onSave(reference);
-    }
+    const linkedRef = await window.electron.ipcRenderer.invoke(
+      'link-file',
+      reference,
+    );
+    onSave(linkedRef);
   };
 
   return (

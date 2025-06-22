@@ -14,19 +14,14 @@ import {
   Typography,
 } from '@mui/material';
 import icon from '../../../assets/icon.png';
-// import SplitButton from './SplitButton';
 
 interface HeaderProps {
   onSearch: (query: string, searchField: string) => void;
   onFindDuplicates: () => void;
-  onHandleMenuAction: (action: string) => void;
+  onHandleExport: (action: string) => void;
 }
 
-function Header({
-  onSearch,
-  onFindDuplicates,
-  onHandleMenuAction,
-}: HeaderProps) {
+function Header({ onSearch, onFindDuplicates, onHandleExport }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState('');
   const [searchField, setSearchField] = useState('all');
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
@@ -114,7 +109,7 @@ function Header({
           <Menu anchorEl={anchorEl} open={open} onClose={handleMenuClose}>
             <MenuItem
               onClick={() => {
-                onHandleMenuAction('bib');
+                onHandleExport('bib');
                 handleMenuClose(); // Close the menu
               }}
             >
@@ -122,7 +117,7 @@ function Header({
             </MenuItem>
             <MenuItem
               onClick={() => {
-                onHandleMenuAction('html');
+                onHandleExport('html');
                 handleMenuClose(); // Close the menu
               }}
             >

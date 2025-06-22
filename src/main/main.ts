@@ -9,17 +9,28 @@
  * `./src/main.js` using webpack. This gives us some performance wins.
  */
 import path from 'path';
-import { app, BrowserWindow, ipcMain, shell, clipboard } from 'electron';
+import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import {
-  resolveHtmlPath,
-  writeLibrary,
-  updatePathsFile,
-  loadLibraries,
-  openFileDialog,
-} from './util';
+import { resolveHtmlPath, updatePathsFile, loadLibraries } from './util';
 import MenuBuilder from './menu';
+import {
+  writeLibrary,
+  searchReferences,
+  findDuplicates,
+  exportFormatted,
+} from './service/LibraryService';
+import Library from './model/Library';
+import Reference from './model/Reference';
+import {
+  saveReference,
+  deleteReference,
+  createReference,
+  addReferences,
+  convertReference,
+  updateReference,
+  linkFile,
+} from './service/ReferenceService';
 
 class AppUpdater {
   constructor() {
@@ -31,16 +42,95 @@ class AppUpdater {
 
 let mainWindow: BrowserWindow | null = null;
 
-ipcMain.on('write-library', async (event, arg) => {
-  writeLibrary(arg);
+ipcMain.handle('write-library', async (event, lib) => {
+  const library = Library.from(lib);
+  const result = writeLibrary(library);
+  return result;
 });
 
 ipcMain.handle('load-libraries', async () => {
   return loadLibraries();
 });
 
-ipcMain.handle('open-file-dialog', async () => {
-  return openFileDialog(['pdf']);
+ipcMain.handle('link-file', async (_event, reference) => {
+  const refInstance = Reference.from(reference);
+  const linkedRef = linkFile(refInstance);
+  return linkedRef;
+});
+
+ipcMain.handle(
+  'search-libraries',
+  async (_event, query, searchField, libraries) => {
+    const libraryInstances = libraries.map(Library.from);
+    const filteredLibrary = searchReferences(
+      query,
+      searchField,
+      libraryInstances,
+    );
+    return filteredLibrary;
+  },
+);
+
+ipcMain.handle('find-duplicates', async (_event, library) => {
+  const libraryInstance = Library.from(library);
+  const duplicateLibrary = findDuplicates(libraryInstance);
+  return duplicateLibrary;
+});
+
+ipcMain.handle('export-formatted', async (_event, library, format) => {
+  const libraryInstance = Library.from(library);
+  const copyResult = exportFormatted(libraryInstance, format);
+  return copyResult;
+});
+
+ipcMain.handle(
+  'save-reference',
+  async (_event, updatedReference, selectedLibrary) => {
+    const libraryInstance = Library.from(selectedLibrary);
+    const referenceInstance = Reference.from(updatedReference);
+    const updatedLibrary = saveReference(referenceInstance, libraryInstance);
+    return updatedLibrary;
+  },
+);
+
+ipcMain.handle(
+  'delete-reference',
+  async (_event, selectedReference, selectedLibrary) => {
+    const libraryInstance = Library.from(selectedLibrary);
+    const referenceInstance = Reference.from(selectedReference);
+    const updatedLibrary = deleteReference(referenceInstance, libraryInstance);
+    return updatedLibrary;
+  },
+);
+
+ipcMain.handle('create-reference', async () => {
+  const newReference = createReference();
+  return newReference;
+});
+
+ipcMain.handle(
+  'add-references',
+  async (_event, libraryToAddRefs, selectedReferences) => {
+    const libraryInstance = Library.from(libraryToAddRefs);
+    const selectedRefsInstances = selectedReferences.map(Reference.from);
+    const updatedLibrary = addReferences(
+      libraryInstance,
+      selectedRefsInstances,
+    );
+    return updatedLibrary;
+  },
+);
+
+ipcMain.handle('convert-reference', async (_event, reference) => {
+  const refInstance = Reference.from(reference);
+  const convertedRef = convertReference(refInstance);
+  return convertedRef;
+});
+
+ipcMain.handle('update-reference', async (_event, reference, bibTeXString) => {
+  const refInstance = Reference.from(reference);
+  const updatedRef = updateReference(refInstance, bibTeXString);
+  return updatedRef;
 });
 
 ipcMain.on('open-file', async (event, arg) => {
@@ -49,10 +139,6 @@ ipcMain.on('open-file', async (event, arg) => {
 
 ipcMain.on('remove-library', async (event, arg) => {
   updatePathsFile(arg, 'remove');
-});
-
-ipcMain.on('copy-to-clipboard', async (event, arg) => {
-  clipboard.writeText(arg);
 });
 
 if (process.env.NODE_ENV === 'production') {
@@ -64,7 +150,7 @@ const isDebug =
   process.env.NODE_ENV === 'development' || process.env.DEBUG_PROD === 'true';
 
 // if (isDebug) {
-//   require('electron-debug')();
+//   require('electron-debug')(); // Enable DevTools by default in development
 // }
 
 const installExtensions = async () => {

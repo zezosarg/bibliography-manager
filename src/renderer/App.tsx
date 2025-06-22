@@ -2,25 +2,23 @@ import { MemoryRouter as Router, Routes, Route } from 'react-router-dom';
 import './App.css';
 import { useState, useEffect } from 'react';
 import { Alert, Box, CssBaseline, Snackbar } from '@mui/material';
+import { ILibrary } from '../types/ILibrary';
 import Sidebar from './components/Sidebar';
 import ReferenceTable from './components/ReferenceTable';
 import Header from './components/Header';
-import Library from '../main/model/Library';
-import Reference from '../main/model/Reference';
 
 function Home() {
-  const [selectedLibrary, setSelectedLibrary] = useState<Library | null>(null);
-  const [libraries, setLibraries] = useState<Library[]>([]);
-  const [selectedItem, setSelectedItem] = useState<Library | null>(null);
-  // const [duplicates, setDuplicates] = useState<Reference[][]>([]);
+  const [selectedLibrary, setSelectedLibrary] = useState<ILibrary | null>(null);
+  const [libraries, setLibraries] = useState<ILibrary[]>([]);
+  const [selectedItem, setSelectedItem] = useState<ILibrary | null>(null);
   const [snackbarOpen, setSnackbarOpen] = useState(false);
   const [snackbarMessage, setSnackbarMessage] = useState('');
 
-  const handleRecordClick = (record: Library) => {
+  const handleRecordClick = (record: ILibrary) => {
     setSelectedLibrary(record);
   };
 
-  const handleRemoveLibrary = (library: Library) => {
+  const handleRemoveLibrary = (library: ILibrary) => {
     setLibraries((prevLibraries) =>
       prevLibraries.filter((lib) => lib !== library),
     );
@@ -28,66 +26,45 @@ function Home() {
     window.electron.ipcRenderer.sendMessage('remove-library', library);
   };
 
-  const handleEditLibrary = (library: Library) => {
+  const handleEditLibrary = (library: ILibrary) => {
     try {
-      window.electron.ipcRenderer.sendMessage('write-library', library);
+      const writeResult = window.electron.ipcRenderer.invoke(
+        'write-library',
+        library,
+      );
+      if (!writeResult) throw new Error(`Failed to write library`);
       setLibraries((prevLibraries) =>
         prevLibraries.map((lib) => (lib.name === library.name ? library : lib)),
       );
       setSelectedLibrary(library);
       setSelectedItem(library);
-    } catch (error) {
-      setSnackbarMessage('Failed to save library');
+      setSnackbarMessage('Library edited successfully');
       setSnackbarOpen(true);
-      console.error('Failed to save library:', error);
+    } catch (error) {
+      setSnackbarMessage('Failed to edit library');
+      setSnackbarOpen(true);
       throw error;
     }
   };
 
-  const handleSearch = (query: string, searchField: string) => {
-    if (!query) {
+  const handleSearch = async (query: string, searchField: string) => {
+    const filteredLibrary = await window.electron.ipcRenderer.invoke(
+      'search-libraries',
+      query,
+      searchField,
+      libraries,
+    );
+    if (!filteredLibrary) {
+      setSnackbarMessage('No results found');
+      setSnackbarOpen(true);
       return;
     }
-    const lowerCaseQuery = query.toLowerCase();
-    const allRefs = libraries.flatMap((library) => library.references);
-    const filteredRefs = allRefs.filter(
-      (ref) =>
-        (ref.title?.toLowerCase().includes(lowerCaseQuery) &&
-          (searchField === 'all' || searchField === 'title')) ||
-        (ref.author?.toLowerCase().includes(lowerCaseQuery) &&
-          (searchField === 'all' || searchField === 'author')) ||
-        (ref.journal?.toLowerCase().includes(lowerCaseQuery) &&
-          (searchField === 'all' || searchField === 'journal')) ||
-        (ref.year?.toString().includes(lowerCaseQuery) &&
-          (searchField === 'all' || searchField === 'year')) ||
-        (ref.volume?.toString().includes(lowerCaseQuery) &&
-          (searchField === 'all' || searchField === 'volume')) ||
-        (ref.number?.toString().includes(lowerCaseQuery) &&
-          (searchField === 'all' || searchField === 'number')) ||
-        (ref.pages?.toString().includes(lowerCaseQuery) &&
-          (searchField === 'all' || searchField === 'pages')) ||
-        (ref.publisher?.toLowerCase().includes(lowerCaseQuery) &&
-          (searchField === 'all' || searchField === 'publisher')) ||
-        (ref.key?.toLowerCase().includes(lowerCaseQuery) &&
-          (searchField === 'all' || searchField === 'key')),
-    );
-    if (filteredRefs.length === 0) {
-      console.log('No results found');
-      return;
-    }
-    const filteredLibrary = new Library(
-      'Search Lib Path',
-      'Search Lib Name',
-      filteredRefs,
-    );
     setSelectedLibrary(filteredLibrary);
-
     setSelectedItem(null);
   };
 
   const handleLibraryData = (...args: unknown[]) => {
-    const library = args[0] as Library;
-
+    const library = args[0] as ILibrary;
     setLibraries((prevLibraries) => {
       const libraryExists = prevLibraries.some(
         (lib) => lib.name === library.name || lib.filePath === library.filePath,
@@ -117,74 +94,48 @@ function Home() {
         setSelectedItem(loadedLibraries[0]);
       }
     } catch (error) {
-      console.error('Failed to load libraries:', error);
+      setSnackbarMessage('Failed to load libraries');
+      setSnackbarOpen(true);
     }
   };
 
-  const handleFindDuplicates = () => {
-    // setDuplicates([]);
-
+  const handleFindDuplicates = async () => {
     if (!selectedLibrary) {
       setSnackbarMessage('No library selected. Please select a library first.');
       setSnackbarOpen(true);
       return;
     }
-
-    const { references } = selectedLibrary;
-
-    const seen = new Map<string, Reference[]>();
-    const duplicateGroups: Reference[][] = [];
-
-    references.forEach((ref) => {
-      const key = `${ref.title?.toLowerCase() || ''}-${ref.author?.toLowerCase() || ''}-${ref.year || ''}`;
-      if (seen.has(key)) {
-        seen.get(key)?.push(ref);
-      } else {
-        seen.set(key, [ref]);
-      }
-    });
-
-    seen.forEach((group) => {
-      if (group.length > 1) {
-        duplicateGroups.push(group);
-      }
-    });
-
-    // setDuplicates(duplicateGroups);
-
-    if (duplicateGroups.length === 0) {
+    const duplicateLibrary = await window.electron.ipcRenderer.invoke(
+      'find-duplicates',
+      selectedLibrary,
+    );
+    if (!duplicateLibrary || duplicateLibrary.references.length === 0) {
       setSnackbarMessage('No duplicates found');
       setSnackbarOpen(true);
     } else {
-      console.log('Duplicates found:', duplicateGroups);
-      const duplicateLibrary = new Library(
-        'Duplicates',
-        'Duplicate References',
-        duplicateGroups.flat(),
-      );
       setSelectedItem(null);
       setSelectedLibrary(duplicateLibrary);
     }
   };
 
-  const handleMenuAction = (action: string) => {
-    if (selectedLibrary) {
-      const references = selectedLibrary.references.map((ref) => {
-        return Object.assign(new Reference(), ref);
-      }); // rehydrate references
-      const library = new Library(
-        selectedLibrary.filePath,
-        selectedLibrary.name,
-        references,
-      ); // rehydrate library
-      const text = Library.exportString(library, action);
-      window.electron.ipcRenderer.sendMessage('copy-to-clipboard', text);
-      setSnackbarMessage(`Library copied to clipboard as ${action}`);
+  const handleExport = async (action: string) => {
+    if (!selectedLibrary) {
+      setSnackbarMessage('No library selected. Please select a library first.');
       setSnackbarOpen(true);
-    } else {
-      setSnackbarMessage('No library selected to export');
-      setSnackbarOpen(true);
+      return;
     }
+    const copyResult = await window.electron.ipcRenderer.invoke(
+      'export-formatted',
+      selectedLibrary,
+      action,
+    );
+    if (!copyResult) {
+      setSnackbarMessage('Failed to export library');
+      setSnackbarOpen(true);
+      return;
+    }
+    setSnackbarMessage(`Library copied to clipboard as ${action}`);
+    setSnackbarOpen(true);
   };
 
   useEffect(() => {
@@ -201,7 +152,7 @@ function Home() {
       <Header
         onSearch={handleSearch}
         onFindDuplicates={handleFindDuplicates}
-        onHandleMenuAction={handleMenuAction}
+        onHandleExport={handleExport}
       />
       <Sidebar
         onRecordClick={handleRecordClick}
@@ -213,7 +164,6 @@ function Home() {
         selectedLibrary={selectedLibrary}
         onRemoveLibrary={handleRemoveLibrary}
         onEditLibrary={handleEditLibrary}
-        // duplicates={duplicates}
       />
       <Snackbar
         open={snackbarOpen}

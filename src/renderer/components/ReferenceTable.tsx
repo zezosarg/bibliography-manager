@@ -11,33 +11,31 @@ import {
   Button,
   Typography,
 } from '@mui/material';
-import Library from '../../main/model/Library';
-import Reference from '../../main/model/Reference';
+import { ILibrary } from '../../types/ILibrary';
+import { IReference } from '../../types/IReference';
 import ReferenceModal from './ReferenceModal';
 
 interface ReferenceTableProps {
-  selectedLibrary: Library | null;
-  onRemoveLibrary: (library: Library) => void;
-  onEditLibrary: (library: Library) => void;
-  // duplicates: Reference[][] | null; // Optional prop for duplicates
+  selectedLibrary: ILibrary | null;
+  onRemoveLibrary: (library: ILibrary) => void;
+  onEditLibrary: (library: ILibrary) => void;
 }
 
 function ReferenceTable({
   selectedLibrary,
   onRemoveLibrary,
   onEditLibrary,
-  // duplicates,
 }: ReferenceTableProps) {
   const [openReferenceModal, setOpenReferenceModal] = useState(false);
-  const [selectedReference, setSelectedReference] = useState<Reference | null>(
+  const [selectedReference, setSelectedReference] = useState<IReference | null>(
     null,
   );
   const [showAddReferencesMessage, setShowAddReferencesMessage] =
     useState(false);
-  const [libraryToAddRefs, setLibraryToAddRefs] = useState<Library | null>(
+  const [libraryToAddRefs, setLibraryToAddRefs] = useState<ILibrary | null>(
     null,
   );
-  const [selectedReferences, setSelectedReferences] = useState<Set<Reference>>(
+  const [selectedReferences, setSelectedReferences] = useState<Set<IReference>>(
     new Set(),
   );
 
@@ -47,7 +45,7 @@ function ReferenceTable({
     }
   };
 
-  const handleRowClick = (row: Reference) => {
+  const handleRowClick = (row: IReference) => {
     if (showAddReferencesMessage) {
       // Toggle selection
       setSelectedReferences((prevSelected) => {
@@ -61,8 +59,8 @@ function ReferenceTable({
       });
     } else {
       // Default behavior: open modal
-      const reference = Object.assign(new Reference(), row); // Rehydrate the reference
-      setSelectedReference(reference);
+      // const reference = Object.assign(new IReference(), row); // Rehydrate the reference
+      setSelectedReference(row);
       setOpenReferenceModal(true);
     }
   };
@@ -72,44 +70,31 @@ function ReferenceTable({
     setSelectedReference(null);
   };
 
-  const handleSaveReference = (updatedReference: Reference) => {
-    if (selectedLibrary) {
-      const referenceExists = selectedLibrary.references.some(
-        (ref) => ref.id === updatedReference.id,
-      );
-      if (!referenceExists) {
-        selectedLibrary.references.push(updatedReference);
-      }
-      const updatedReferences = selectedLibrary.references.map((ref) =>
-        ref.id === updatedReference.id ? updatedReference : ref,
-      );
-      const updatedLibrary = new Library(
-        selectedLibrary.filePath,
-        selectedLibrary.name,
-        updatedReferences,
-      );
-      onEditLibrary(updatedLibrary);
-    }
+  const handleSaveReference = async (updatedReference: IReference) => {
+    if (!selectedLibrary) return;
+    const updatedLibrary = await window.electron.ipcRenderer.invoke(
+      'save-reference',
+      updatedReference,
+      selectedLibrary,
+    );
+    onEditLibrary(updatedLibrary);
     handleCloseModal();
   };
 
-  const handleDeleteReference = () => {
-    if (selectedLibrary) {
-      const updatedReferences = selectedLibrary.references.filter(
-        (ref) => ref.id !== selectedReference?.id,
-      );
-      const updatedLibrary = new Library(
-        selectedLibrary.filePath,
-        selectedLibrary.name,
-        updatedReferences,
-      );
-      onEditLibrary(updatedLibrary);
-    }
+  const handleDeleteReference = async () => {
+    if (!selectedLibrary) return;
+    const updatedLibrary = await window.electron.ipcRenderer.invoke(
+      'delete-reference',
+      selectedReference,
+      selectedLibrary,
+    );
+    onEditLibrary(updatedLibrary);
     handleCloseModal();
   };
 
-  const handleNewReference = () => {
-    const newReference = new Reference();
+  const handleNewReference = async () => {
+    const newReference =
+      await window.electron.ipcRenderer.invoke('create-reference');
     setSelectedReference(newReference);
     setOpenReferenceModal(true);
   };
@@ -131,31 +116,17 @@ function ReferenceTable({
     setSelectedReferences(new Set());
   };
 
-  const handleAddSelected = () => {
-    if (libraryToAddRefs) {
-      const selectedRefs = Array.from(selectedReferences);
-
-      const updatedReferences = [
-        ...libraryToAddRefs.references,
-        ...selectedRefs.filter(
-          (ref) =>
-            !libraryToAddRefs.references.some(
-              (existingRef) => existingRef.id === ref.id,
-            ),
-        ),
-      ];
-
-      const updatedLibrary = new Library(
-        libraryToAddRefs.filePath,
-        libraryToAddRefs.name,
-        updatedReferences,
-      );
-
-      onEditLibrary(updatedLibrary);
-      setSelectedReferences(new Set());
-      setShowAddReferencesMessage(false); // Exit add references mode
-      setLibraryToAddRefs(null);
-    }
+  const handleAddSelected = async () => {
+    if (!libraryToAddRefs) return;
+    const updatedLibrary = await window.electron.ipcRenderer.invoke(
+      'add-references',
+      libraryToAddRefs,
+      Array.from(selectedReferences),
+    );
+    onEditLibrary(updatedLibrary);
+    setSelectedReferences(new Set());
+    setShowAddReferencesMessage(false); // Exit add references mode
+    setLibraryToAddRefs(null);
   };
 
   return (
@@ -268,11 +239,7 @@ function ReferenceTable({
                 <TableCell>Pages</TableCell>
                 <TableCell>Year</TableCell>
                 <TableCell>Publisher</TableCell>
-                {/* <TableCell>ISSN</TableCell> */}
                 <TableCell>DOI</TableCell>
-                {/* <TableCell>URL</TableCell> */}
-                {/* <TableCell>Keywords</TableCell> */}
-                {/* <TableCell>Abstract</TableCell> */}
                 <TableCell>File</TableCell>
               </TableRow>
             </TableHead>
@@ -287,16 +254,6 @@ function ReferenceTable({
                       selectedReferences.has(row)
                         ? 'var(--highlight-color)' // Highlight selected rows
                         : 'inherit',
-                    // '& td': {
-                    //   fontWeight: (() => {
-                    //     const groupIndex = duplicates?.findIndex((group) =>
-                    //       group.includes(row),
-                    //     );
-                    //     return groupIndex !== undefined && groupIndex % 2 === 0
-                    //       ? 'bold' // Make font bold for even-indexed groups (1-based: 2nd, 4th, etc.)
-                    //       : 'inherit'; // Default font weight
-                    //   })(),
-                    // },
                     '&:hover': {
                       backgroundColor: 'var(--hover-color)',
                       cursor: 'pointer', // Change cursor to pointer on hover
@@ -305,23 +262,6 @@ function ReferenceTable({
                   onClick={() => handleRowClick(row)}
                 >
                   <TableCell>{row.key}</TableCell>
-                  {/* <TableCell>
-                    {row.key ? (
-                      <Button
-                        variant="text"
-                        color="info"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering row click
-                          navigator.clipboard.writeText(row.key ?? ''); // Copy row.key to clipboard
-                        }}
-                      >
-                        {row.key}
-                      </Button>
-                    ) : (
-                      'N/A'
-                    )}
-                  </TableCell> */}
                   <TableCell>{row.entryType}</TableCell>
                   <TableCell>{row.title}</TableCell>
                   <TableCell>{row.author}</TableCell>
@@ -331,8 +271,6 @@ function ReferenceTable({
                   <TableCell>{row.pages}</TableCell>
                   <TableCell>{row.year}</TableCell>
                   <TableCell>{row.publisher}</TableCell>
-                  {/* <TableCell>{row.issn}</TableCell> */}
-                  {/* <TableCell>{row.doi}</TableCell> */}
                   <TableCell>
                     {row.doi ? (
                       <Button
@@ -355,26 +293,6 @@ function ReferenceTable({
                       'N/A'
                     )}
                   </TableCell>
-                  {/* <TableCell>{row.url}</TableCell> */}
-                  {/* <TableCell>
-                    {row.url ? (
-                      <Button
-                        variant="text"
-                        color="info"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering row click
-                          window.open(row.url, '_blank', 'noopener,noreferrer'); // Open the URL in a new tab
-                        }}
-                      >
-                        Link
-                      </Button>
-                    ) : (
-                      'N/A'
-                    )}
-                  </TableCell> */}
-                  {/* <TableCell>{row.keywords}</TableCell> */}
-                  {/* <TableCell>{row.abstract}</TableCell> */}
                   <TableCell>
                     {row.linkedFilePath ? (
                       <Button

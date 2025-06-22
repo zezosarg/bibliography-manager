@@ -7,10 +7,18 @@ export type Channels =
   | 'open-library'
   | 'write-library'
   | 'load-libraries'
-  | 'open-file-dialog'
   | 'open-file'
   | 'remove-library'
-  | 'copy-to-clipboard';
+  | 'search-libraries'
+  | 'find-duplicates'
+  | 'export-formatted'
+  | 'save-reference'
+  | 'delete-reference'
+  | 'create-reference'
+  | 'convert-reference'
+  | 'update-reference'
+  | 'link-file'
+  | 'add-references';
 
 const electronHandler = {
   ipcRenderer: {

@@ -1,6 +1,7 @@
 // BibTexReference class to represent an individual BibTeX entry
+import { IReference } from '../../types/IReference';
 
-export default class Reference {
+export default class Reference implements IReference {
   id: string;
 
   key?: string;
@@ -76,6 +77,29 @@ export default class Reference {
     this.linkedFilePath = linkedFilePath;
     this.metadata = metadata;
     this.key = key || this.generateKey();
+  }
+
+  static from(data: IReference): Reference {
+    return new Reference(
+      data.id,
+      data.key,
+      data.entryType,
+      data.title,
+      data.author,
+      data.journal,
+      data.volume,
+      data.number,
+      data.pages,
+      data.year,
+      data.publisher,
+      data.issn,
+      data.doi,
+      data.url,
+      data.keywords,
+      data.abstract,
+      data.linkedFilePath,
+      { ...data.metadata }, // Ensure metadata is copied
+    );
   }
 
   generateKey(): string {

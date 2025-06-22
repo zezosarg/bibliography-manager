@@ -6,15 +6,14 @@ import {
   ListItemButton,
   ListItemText,
   Typography,
-  // Divider,
 } from '@mui/material';
-import Library from '../../main/model/Library';
+import { ILibrary } from '../../types/ILibrary';
 
 interface SidebarProps {
-  onRecordClick: (item: Library) => void;
-  libraries: Library[];
-  selectedItem: Library | null;
-  setSelectedItem: (item: Library | null) => void;
+  onRecordClick: (item: ILibrary) => void;
+  libraries: ILibrary[];
+  selectedItem: ILibrary | null;
+  setSelectedItem: (item: ILibrary | null) => void;
 }
 
 function Sidebar({
@@ -55,7 +54,7 @@ function Sidebar({
     };
   }, [isResizing]);
 
-  const handleItemClick = (item: Library) => {
+  const handleItemClick = (item: ILibrary) => {
     setSelectedItem(item);
     onRecordClick(item);
   };
@@ -90,7 +89,6 @@ function Sidebar({
               Libraries
             </Typography>
           </Box>
-          {/* <Divider /> */}
           <List>
             {libraries.map((item) => (
               <ListItemButton

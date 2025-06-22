@@ -5,7 +5,7 @@ import { dialog, BrowserWindow } from 'electron';
 import fs from 'fs';
 import os from 'os';
 import Library from './model/Library';
-import Reference from './model/Reference';
+import getParser from './parser/ParserFactory';
 
 export function resolveHtmlPath(htmlFileName: string) {
   if (process.env.NODE_ENV === 'development') {
@@ -54,26 +54,14 @@ export async function handleFilePick(mainWindow: BrowserWindow) {
     const filePath = result.filePaths[0];
     try {
       const bibFile = fs.readFileSync(filePath, 'utf8');
-      const library = Library.parseString(bibFile, filePath);
+      const parser = getParser(filePath);
+      const library = parser.parse(bibFile, filePath);
       fs.writeFileSync(library.filePath, library.listReferences(), 'utf8');
       updatePathsFile(library, 'add');
       mainWindow.webContents.send('open-library', library);
     } catch (error) {
       console.error('Error reading .bib file:', error);
     }
-  }
-}
-
-export async function writeLibrary(lib: Library) {
-  const references = lib.references.map((ref) => {
-    return Object.assign(new Reference(), ref);
-  }); // rehydrate lib.references
-  const library = new Library(lib.filePath, lib.name, references); // rehydrate lib
-  const bibContent = library.listReferences();
-  try {
-    fs.writeFileSync(library.filePath, bibContent, 'utf8');
-  } catch (error) {
-    console.error('Error saving library:', error);
   }
 }
 
@@ -110,7 +98,9 @@ export async function loadLibraries() {
   const libraries = paths.map((libraryPath: string) => {
     if (fs.existsSync(libraryPath)) {
       const libraryData = fs.readFileSync(libraryPath, 'utf-8');
-      return Library.parseString(libraryData, libraryPath);
+      const parser = getParser(libraryPath);
+      const library = parser.parse(libraryData, libraryPath);
+      return library;
     }
     return null;
   });
