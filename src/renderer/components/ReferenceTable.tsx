@@ -1,19 +1,10 @@
 import React, { useState } from 'react';
-import {
-  Box,
-  TableContainer,
-  Table,
-  TableHead,
-  TableRow,
-  TableCell,
-  TableBody,
-  Paper,
-  Button,
-  Typography,
-} from '@mui/material';
+import { Box } from '@mui/material';
 import { ILibrary } from '../../types/ILibrary';
 import { IReference } from '../../types/IReference';
 import ReferenceModal from './ReferenceModal';
+import ReferenceTableHeader from './ReferenceTableHeader';
+import ReferenceTableBody from './ReferenceTableBody';
 
 interface ReferenceTableProps {
   selectedLibrary: ILibrary | null;
@@ -59,7 +50,6 @@ function ReferenceTable({
       });
     } else {
       // Default behavior: open modal
-      // const reference = Object.assign(new IReference(), row); // Rehydrate the reference
       setSelectedReference(row);
       setOpenReferenceModal(true);
     }
@@ -99,12 +89,6 @@ function ReferenceTable({
     setOpenReferenceModal(true);
   };
 
-  const handleOpenFile = (filePath: string | undefined) => {
-    if (filePath) {
-      window.electron.ipcRenderer.sendMessage('open-file', filePath);
-    }
-  };
-
   const handleAddReferences = () => {
     setShowAddReferencesMessage(true);
     setLibraryToAddRefs(selectedLibrary);
@@ -141,192 +125,24 @@ function ReferenceTable({
         minHeight: '100vh',
       }}
     >
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'space-between', // Space between the title and the button
-          alignItems: 'center',
-          marginBottom: 0,
-        }}
-      >
-        <h2>References</h2>
-        {showAddReferencesMessage && selectedLibrary && (
-          <Box
-            sx={{
-              backgroundColor: 'var(--highlight-color)',
-              padding: 1,
-              borderRadius: 2, // Slightly rounded corners
-              textAlign: 'center',
-            }}
-          >
-            <Typography>
-              Select References to Add to{' '}
-              <strong>{libraryToAddRefs?.name || 'Unknown Library'}</strong> (
-              {selectedReferences.size} selected)
-            </Typography>
-          </Box>
-        )}
-        {selectedLibrary && (
-          <Box sx={{ display: 'flex', gap: 1 }}>
-            {!showAddReferencesMessage && (
-              <>
-                <Button
-                  variant="contained"
-                  color="info"
-                  onClick={handleAddReferences}
-                  sx={{ marginLeft: 'auto' }}
-                >
-                  Add References
-                </Button>
-                <Button
-                  variant="contained"
-                  color="info"
-                  onClick={handleNewReference}
-                >
-                  New Reference
-                </Button>
-                <Button
-                  variant="contained"
-                  color="inherit"
-                  onClick={handleRemoveLibrary}
-                  sx={{ marginLeft: 'auto' }}
-                >
-                  Remove Library
-                </Button>
-              </>
-            )}
-            {showAddReferencesMessage && (
-              <>
-                <Button
-                  variant="contained"
-                  color="info"
-                  onClick={handleAddSelected}
-                >
-                  Add Selected
-                </Button>
-                <Button
-                  variant="contained"
-                  color="inherit"
-                  onClick={handleCancel}
-                  sx={{ marginLeft: 'auto' }}
-                >
-                  Cancel
-                </Button>
-              </>
-            )}
-          </Box>
-        )}
-      </Box>
+      <ReferenceTableHeader
+        selectedLibrary={selectedLibrary}
+        showAddReferencesMessage={showAddReferencesMessage}
+        libraryToAddRefs={libraryToAddRefs}
+        selectedReferencesCount={selectedReferences.size}
+        handleAddReferences={handleAddReferences}
+        handleNewReference={handleNewReference}
+        handleRemoveLibrary={handleRemoveLibrary}
+        handleAddSelected={handleAddSelected}
+        handleCancel={handleCancel}
+      />
 
-      {selectedLibrary ? (
-        <TableContainer
-          component={Paper}
-          sx={{
-            maxHeight: '80vh', // Set a maximum height for the table container
-            overflowY: 'auto', // Enable vertical scrolling
-          }}
-        >
-          <Table stickyHeader sx={{ minWidth: 650 }} aria-label="simple table">
-            <TableHead>
-              <TableRow>
-                <TableCell>Key</TableCell>
-                <TableCell>Type</TableCell>
-                <TableCell>Title</TableCell>
-                <TableCell>Author</TableCell>
-                <TableCell>Journal</TableCell>
-                <TableCell>Volume</TableCell>
-                <TableCell>Number</TableCell>
-                <TableCell>Pages</TableCell>
-                <TableCell>Year</TableCell>
-                <TableCell>Publisher</TableCell>
-                <TableCell>DOI</TableCell>
-                <TableCell>File</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {selectedLibrary.references.map((row) => (
-                <TableRow
-                  key={row.id}
-                  sx={{
-                    backgroundColor:
-                      showAddReferencesMessage &&
-                      row.id &&
-                      selectedReferences.has(row)
-                        ? 'var(--highlight-color)' // Highlight selected rows
-                        : 'inherit',
-                    '&:hover': {
-                      backgroundColor: 'var(--hover-color)',
-                      cursor: 'pointer', // Change cursor to pointer on hover
-                    },
-                  }}
-                  onClick={() => handleRowClick(row)}
-                >
-                  <TableCell>{row.key}</TableCell>
-                  <TableCell>{row.entryType}</TableCell>
-                  <TableCell>{row.title}</TableCell>
-                  <TableCell>{row.author}</TableCell>
-                  <TableCell>{row.journal}</TableCell>
-                  <TableCell>{row.volume}</TableCell>
-                  <TableCell>{row.number}</TableCell>
-                  <TableCell>{row.pages}</TableCell>
-                  <TableCell>{row.year}</TableCell>
-                  <TableCell>{row.publisher}</TableCell>
-                  <TableCell>
-                    {row.doi ? (
-                      <Button
-                        variant="text"
-                        color="info"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering row click
-                          const doiUrl = (row.doi ?? '').startsWith(
-                            'https://doi.org/',
-                          )
-                            ? row.doi
-                            : `https://doi.org/${row.doi}`;
-                          window.open(doiUrl, '_blank', 'noopener,noreferrer'); // Open the URL in a new tab
-                        }}
-                      >
-                        WEB
-                      </Button>
-                    ) : (
-                      'N/A'
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    {row.linkedFilePath ? (
-                      <Button
-                        variant="text"
-                        color="info"
-                        size="small"
-                        onClick={(e) => {
-                          e.stopPropagation(); // Prevent triggering row click
-                          handleOpenFile(row.linkedFilePath);
-                        }}
-                      >
-                        {row.linkedFilePath.split('.').pop()}{' '}
-                      </Button>
-                    ) : (
-                      'N/A'
-                    )}
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      ) : (
-        <Typography
-          variant="body2"
-          sx={{
-            textAlign: 'center',
-            marginTop: 2,
-            color: 'var(--help-color)',
-          }}
-        >
-          Select a Library or Search References
-        </Typography>
-      )}
+      <ReferenceTableBody
+        selectedLibrary={selectedLibrary}
+        showAddReferencesMessage={showAddReferencesMessage}
+        selectedReferences={selectedReferences}
+        handleRowClick={handleRowClick}
+      />
 
       <ReferenceModal
         open={openReferenceModal}

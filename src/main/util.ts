@@ -47,7 +47,7 @@ export function openFileDialog(fileTypes: string[]) {
   });
 }
 
-export async function handleFilePick(mainWindow: BrowserWindow) {
+export async function handleOpenLibrary(mainWindow: BrowserWindow) {
   const result = await openFileDialog(['bib', 'ris', 'nbib']);
 
   if (!result.canceled && result.filePaths.length > 0) {
@@ -65,7 +65,7 @@ export async function handleFilePick(mainWindow: BrowserWindow) {
   }
 }
 
-export async function handleNewFile(mainWindow: BrowserWindow) {
+export async function handleNewLibrary(mainWindow: BrowserWindow) {
   const result = await dialog.showSaveDialog({
     title: 'Create New Library',
     defaultPath: 'NewLibrary.bib', // Default file name
