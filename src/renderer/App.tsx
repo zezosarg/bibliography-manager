@@ -23,28 +23,44 @@ function Home() {
       prevLibraries.filter((lib) => lib !== library),
     );
     setSelectedLibrary(null);
-    window.electron.ipcRenderer.sendMessage('remove-library', library);
+    window.electron.ipcRenderer.sendMessage('remove-library', library); // TODO check if success
+  };
+
+  const loadLibraries = async () => {
+    try {
+      const loadedLibraries =
+        await window.electron.ipcRenderer.invoke('load-libraries');
+      setLibraries(loadedLibraries);
+      if (loadedLibraries.length > 0) {
+        setSelectedLibrary(loadedLibraries[0]);
+        setSelectedItem(loadedLibraries[0]);
+      }
+    } catch (error) {
+      setSnackbarMessage('Failed to load libraries');
+      setSnackbarOpen(true);
+    }
   };
 
   const handleEditLibrary = (library: ILibrary) => {
-    try {
-      const writeResult = window.electron.ipcRenderer.invoke(
-        'write-library',
-        library,
-      );
-      if (!writeResult) throw new Error(`Failed to write library`);
-      setLibraries((prevLibraries) =>
-        prevLibraries.map((lib) => (lib.name === library.name ? library : lib)),
-      );
-      setSelectedLibrary(library);
-      setSelectedItem(library);
-      setSnackbarMessage('Library edited successfully');
-      setSnackbarOpen(true);
-    } catch (error) {
-      setSnackbarMessage('Failed to edit library');
-      setSnackbarOpen(true);
-      throw error;
-    }
+    // try {
+    // const writeResult = window.electron.ipcRenderer.invoke(
+    //   'write-library',
+    //   library,
+    // );
+    // if (!writeResult) throw new Error(`Failed to write library`);
+    // setLibraries((prevLibraries) =>
+    //   prevLibraries.map((lib) => (lib.name === library.name ? library : lib)),
+    // );
+    loadLibraries();
+    setSelectedLibrary(library);
+    setSelectedItem(library);
+    setSnackbarMessage('Library edited successfully');
+    setSnackbarOpen(true);
+    // } catch (error) {
+    //   setSnackbarMessage('Failed to edit library');
+    //   setSnackbarOpen(true);
+    //   throw error;
+    // }
   };
 
   const handleSearch = async (query: string, searchField: string) => {
@@ -55,8 +71,8 @@ function Home() {
       libraries,
     );
     if (!filteredLibrary) {
-      setSnackbarMessage('No results found');
-      setSnackbarOpen(true);
+      // setSnackbarMessage('No results found');
+      // setSnackbarOpen(true);
       return;
     }
     setSelectedLibrary(filteredLibrary);
@@ -84,21 +100,6 @@ function Home() {
     setSelectedItem(library);
   };
 
-  const loadLibraries = async () => {
-    try {
-      const loadedLibraries =
-        await window.electron.ipcRenderer.invoke('load-libraries');
-      setLibraries(loadedLibraries);
-      if (loadedLibraries.length > 0) {
-        setSelectedLibrary(loadedLibraries[0]);
-        setSelectedItem(loadedLibraries[0]);
-      }
-    } catch (error) {
-      setSnackbarMessage('Failed to load libraries');
-      setSnackbarOpen(true);
-    }
-  };
-
   const handleFindDuplicates = async () => {
     if (!selectedLibrary) {
       setSnackbarMessage('No library selected. Please select a library first.');
@@ -115,6 +116,8 @@ function Home() {
     } else {
       setSelectedItem(null);
       setSelectedLibrary(duplicateLibrary);
+      setSnackbarMessage('Duplicates found and loaded');
+      setSnackbarOpen(true);
     }
   };
 

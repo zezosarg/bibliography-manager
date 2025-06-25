@@ -138,15 +138,7 @@ export default class Reference implements IReference {
   }
 
   toHtmlString(): string {
-    const authors =
-      this.author
-        ?.split(' and ')
-        .map((name) => {
-          const [lastName, firstName] = name.split(',').map((s) => s.trim());
-          return `${lastName}, ${firstName.charAt(0)}.`;
-        })
-        .join(', &#38; ') || 'Unknown Author';
-
+    const authors = this.author ? this.author : 'Unknown Author';
     const journal = this.journal ? `<i>${this.journal}</i>` : '';
     const volume = this.volume ? `<i>${this.volume}</i>` : '';
     const number = this.number ? `(${this.number})` : '';

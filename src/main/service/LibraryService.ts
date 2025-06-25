@@ -46,7 +46,7 @@ export function searchReferences(
         (searchField === 'all' || searchField === 'key')),
   );
   if (filteredRefs.length === 0) {
-    console.log('No results found');
+    // console.log('No results found');
     return undefined;
   }
   const filteredLibrary = new Library(

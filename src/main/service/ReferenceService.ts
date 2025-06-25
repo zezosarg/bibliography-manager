@@ -2,6 +2,7 @@ import Reference from '../model/Reference';
 import Library from '../model/Library';
 import { openFileDialog } from '../util';
 import getParser from '../parser/ParserFactory';
+import { writeLibrary } from './LibraryService';
 
 export function saveReference(
   updatedReference: Reference,
@@ -17,6 +18,7 @@ export function saveReference(
     ref.id === updatedReference.id ? updatedReference : ref,
   );
   selectedLibrary.references = updatedReferences;
+  writeLibrary(selectedLibrary); // TODO error handling
   return selectedLibrary;
 }
 
@@ -28,6 +30,7 @@ export function deleteReference(
     (ref) => ref.id !== selectedReference?.id,
   );
   selectedLibrary.references = updatedReferences;
+  writeLibrary(selectedLibrary); // TODO error handling
   return selectedLibrary;
 }
 
@@ -49,6 +52,7 @@ export function addReferences(
     ),
   ];
   libraryToAddRefs.references = updatedReferences;
+  writeLibrary(libraryToAddRefs); // TODO error handling
   return libraryToAddRefs;
 }
 
