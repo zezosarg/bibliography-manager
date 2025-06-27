@@ -10,12 +10,14 @@ interface ReferenceTableProps {
   selectedLibrary: ILibrary | null;
   onRemoveLibrary: (library: ILibrary) => void;
   onEditLibrary: (library: ILibrary) => void;
+  libraries: ILibrary[];
 }
 
 function ReferenceTable({
   selectedLibrary,
   onRemoveLibrary,
   onEditLibrary,
+  libraries,
 }: ReferenceTableProps) {
   const [openReferenceModal, setOpenReferenceModal] = useState(false);
   const [selectedReference, setSelectedReference] = useState<IReference | null>(
@@ -62,6 +64,7 @@ function ReferenceTable({
 
   const handleSaveReference = async (updatedReference: IReference) => {
     if (!selectedLibrary) return;
+    // if (selectedLibrary == duplicates || selectedLibrary == search) ... find correct selectedLib
     const updatedLibrary = await window.electron.ipcRenderer.invoke(
       'save-reference',
       updatedReference,
@@ -73,6 +76,7 @@ function ReferenceTable({
 
   const handleDeleteReference = async () => {
     if (!selectedLibrary) return;
+    // if (selectedLibrary == duplicates || selectedLibrary == search) ... find correct selectedLib
     const updatedLibrary = await window.electron.ipcRenderer.invoke(
       'delete-reference',
       selectedReference,

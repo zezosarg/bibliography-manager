@@ -42,25 +42,25 @@ function Home() {
   };
 
   const handleEditLibrary = (library: ILibrary) => {
-    // try {
-    // const writeResult = window.electron.ipcRenderer.invoke(
-    //   'write-library',
-    //   library,
-    // );
-    // if (!writeResult) throw new Error(`Failed to write library`);
-    // setLibraries((prevLibraries) =>
-    //   prevLibraries.map((lib) => (lib.name === library.name ? library : lib)),
-    // );
-    loadLibraries();
-    setSelectedLibrary(library);
-    setSelectedItem(library);
-    setSnackbarMessage('Library edited successfully');
-    setSnackbarOpen(true);
-    // } catch (error) {
-    //   setSnackbarMessage('Failed to edit library');
-    //   setSnackbarOpen(true);
-    //   throw error;
-    // }
+    try {
+      const writeResult = window.electron.ipcRenderer.invoke(
+        'write-library',
+        library,
+      );
+      if (!writeResult) throw new Error(`Failed to write library`);
+      // setLibraries((prevLibraries) =>
+      //   prevLibraries.map((lib) => (lib.name === library.name ? library : lib)),
+      // );
+      loadLibraries();
+      setSelectedLibrary(library);
+      setSelectedItem(library);
+      setSnackbarMessage('Library edited successfully');
+      setSnackbarOpen(true);
+    } catch (error) {
+      setSnackbarMessage('Failed to edit library');
+      setSnackbarOpen(true);
+      throw error;
+    }
   };
 
   const handleSearch = async (query: string, searchField: string) => {
@@ -71,8 +71,6 @@ function Home() {
       libraries,
     );
     if (!filteredLibrary) {
-      // setSnackbarMessage('No results found');
-      // setSnackbarOpen(true);
       return;
     }
     setSelectedLibrary(filteredLibrary);
@@ -167,6 +165,7 @@ function Home() {
         selectedLibrary={selectedLibrary}
         onRemoveLibrary={handleRemoveLibrary}
         onEditLibrary={handleEditLibrary}
+        libraries={libraries}
       />
       <Snackbar
         open={snackbarOpen}
