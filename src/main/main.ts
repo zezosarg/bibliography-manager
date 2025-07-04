@@ -83,28 +83,20 @@ ipcMain.handle('export-formatted', async (_event, library, format) => {
   return copyResult;
 });
 
-ipcMain.handle(
-  'save-reference',
-  async (_event, updatedReference, selectedLibrary) => {
-    const libraryInstance = Library.from(selectedLibrary);
-    const referenceInstance = Reference.from(updatedReference);
-    const updatedLibrary = saveReference(referenceInstance, libraryInstance);
-    return updatedLibrary;
-  },
-);
+ipcMain.handle('save-reference', async (_event, updatedReference) => {
+  const referenceInstance = Reference.from(updatedReference);
+  const updatedLibrary = saveReference(referenceInstance);
+  return updatedLibrary;
+});
 
-ipcMain.handle(
-  'delete-reference',
-  async (_event, selectedReference, selectedLibrary) => {
-    const libraryInstance = Library.from(selectedLibrary);
-    const referenceInstance = Reference.from(selectedReference);
-    const updatedLibrary = deleteReference(referenceInstance, libraryInstance);
-    return updatedLibrary;
-  },
-);
+ipcMain.handle('delete-reference', async (_event, selectedReference) => {
+  const referenceInstance = Reference.from(selectedReference);
+  const updatedLibrary = deleteReference(referenceInstance);
+  return updatedLibrary;
+});
 
-ipcMain.handle('create-reference', async () => {
-  const newReference = createReference();
+ipcMain.handle('create-reference', async (_event, selectedLibrary) => {
+  const newReference = createReference(selectedLibrary);
   return newReference;
 });
 

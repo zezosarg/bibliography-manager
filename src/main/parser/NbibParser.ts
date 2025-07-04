@@ -15,7 +15,10 @@ export default class NbibParser implements IParser {
         const [_, key, value] = match;
         if (key === 'PMID') {
           if (Object.keys(currentEntry).length > 0) {
-            const reference = this.createReferenceFromNbibEntry(currentEntry);
+            const reference = this.createReferenceFromNbibEntry(
+              currentEntry,
+              library,
+            );
             library.references.push(reference);
             currentEntry = {};
           }
@@ -30,7 +33,10 @@ export default class NbibParser implements IParser {
     });
 
     if (Object.keys(currentEntry).length > 0) {
-      const reference = this.createReferenceFromNbibEntry(currentEntry);
+      const reference = this.createReferenceFromNbibEntry(
+        currentEntry,
+        library,
+      );
       library.references.push(reference);
     }
 
@@ -41,7 +47,10 @@ export default class NbibParser implements IParser {
     return library;
   }
 
-  private createReferenceFromNbibEntry(entry: Record<string, any>): Reference {
+  private createReferenceFromNbibEntry(
+    entry: Record<string, any>,
+    library: Library,
+  ): Reference {
     const metadata: Record<string, any> = {};
     Object.entries(entry).forEach(([key, value]) => {
       if (
@@ -66,6 +75,7 @@ export default class NbibParser implements IParser {
     });
 
     return new Reference(
+      library,
       undefined, // id will be auto-generated
       entry.PMID, // key
       'article', // entryType

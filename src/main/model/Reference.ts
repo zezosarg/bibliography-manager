@@ -1,8 +1,11 @@
 // BibTexReference class to represent an individual BibTeX entry
 import { IReference } from '../../types/IReference';
+import Library from './Library';
 
 export default class Reference implements IReference {
-  id: string;
+  library?: Library;
+
+  id?: string;
 
   key?: string;
 
@@ -40,6 +43,7 @@ export default class Reference implements IReference {
   metadata: Record<string, any>;
 
   constructor(
+    library?: Library,
     id?: string,
     key?: string,
     entryType?: string,
@@ -59,7 +63,9 @@ export default class Reference implements IReference {
     linkedFilePath?: string,
     metadata: Record<string, any> = {},
   ) {
+    this.library = library;
     this.id = id || crypto.randomUUID();
+    this.key = key || this.generateKey();
     this.entryType = entryType;
     this.title = title;
     this.author = author;
@@ -76,11 +82,11 @@ export default class Reference implements IReference {
     this.abstract = abstract;
     this.linkedFilePath = linkedFilePath;
     this.metadata = metadata;
-    this.key = key || this.generateKey();
   }
 
   static from(data: IReference): Reference {
     return new Reference(
+      data.library ? Library.from(data.library) : undefined,
       data.id,
       data.key,
       data.entryType,

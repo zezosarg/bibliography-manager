@@ -37,6 +37,7 @@ export default class BibTexParser implements IParser {
         }, metadata);
 
       const reference = Object.assign(new Reference(), {
+        library,
         key: entry.key,
         entryType: entry.type,
         title: entry.TITLE,

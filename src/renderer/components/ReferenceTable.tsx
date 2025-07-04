@@ -68,7 +68,6 @@ function ReferenceTable({
     const updatedLibrary = await window.electron.ipcRenderer.invoke(
       'save-reference',
       updatedReference,
-      selectedLibrary,
     );
     onEditLibrary(updatedLibrary);
     handleCloseModal();
@@ -80,15 +79,16 @@ function ReferenceTable({
     const updatedLibrary = await window.electron.ipcRenderer.invoke(
       'delete-reference',
       selectedReference,
-      selectedLibrary,
     );
     onEditLibrary(updatedLibrary);
     handleCloseModal();
   };
 
   const handleNewReference = async () => {
-    const newReference =
-      await window.electron.ipcRenderer.invoke('create-reference');
+    const newReference = await window.electron.ipcRenderer.invoke(
+      'create-reference',
+      selectedLibrary,
+    );
     setSelectedReference(newReference);
     setOpenReferenceModal(true);
   };

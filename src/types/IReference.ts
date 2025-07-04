@@ -1,5 +1,9 @@
+import type { ILibrary } from './ILibrary';
+
 export interface IReference {
-  id: string;
+  library?: ILibrary;
+
+  id?: string;
 
   key?: string;
 
@@ -33,5 +37,5 @@ export interface IReference {
 
   linkedFilePath?: string;
 
-  metadata: Record<string, any>; // Property to store additional (not recognized) fields
+  metadata?: Record<string, any>; // Property to store additional (not recognized) fields
 }

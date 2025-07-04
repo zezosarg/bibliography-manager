@@ -4,44 +4,47 @@ import { openFileDialog } from '../util';
 import getParser from '../parser/ParserFactory';
 // import { writeLibrary } from './LibraryService';
 
-export function saveReference(
-  updatedReference: Reference,
-  selectedLibrary: Library,
-): Library {
-  const referenceExists = selectedLibrary.references.some(
-    (ref) => ref.id === updatedReference.id,
-  );
-  if (!referenceExists) {
-    selectedLibrary.references.push(updatedReference);
+export function saveReference(updatedReference: Reference): Library {
+  if (updatedReference.library) {
+    const referenceExists = updatedReference.library.references.some(
+      (ref) => ref.id === updatedReference.id,
+    );
+    if (!referenceExists) {
+      updatedReference.library.references.push(updatedReference);
+    }
+    const updatedReferences = updatedReference.library.references.map((ref) =>
+      ref.id === updatedReference.id ? updatedReference : ref,
+    );
+    updatedReference.library.references = updatedReferences;
+    // writeLibrary(selectedLibrary); // TODO error handling
+    return updatedReference.library;
   }
-  const updatedReferences = selectedLibrary.references.map((ref) =>
-    ref.id === updatedReference.id ? updatedReference : ref,
-  );
-  selectedLibrary.references = updatedReferences;
-  // writeLibrary(selectedLibrary); // TODO error handling
-  return selectedLibrary;
+  throw new Error('Reference does not belong to any library');
 }
 
-export function deleteReference(
-  selectedReference: Reference,
-  selectedLibrary: Library,
-): Library {
-  const updatedReferences = selectedLibrary.references.filter(
-    (ref) => ref.id !== selectedReference?.id,
-  );
-  selectedLibrary.references = updatedReferences;
-  // writeLibrary(selectedLibrary); // TODO error handling
-  return selectedLibrary;
+export function deleteReference(selectedReference: Reference): Library {
+  if (selectedReference.library) {
+    const updatedReferences = selectedReference.library?.references.filter(
+      (ref) => ref.id !== selectedReference?.id,
+    );
+    selectedReference.library.references = updatedReferences || [];
+    // writeLibrary(selectedLibrary); // TODO error handling
+    return selectedReference.library;
+  }
+  throw new Error('Reference does not belong to any library');
 }
 
-export function createReference(): Reference {
-  return new Reference();
+export function createReference(selectedLibrary: Library): Reference {
+  return new Reference(selectedLibrary);
 }
 
 export function addReferences(
   libraryToAddRefs: Library,
   selectedReferences: Reference[],
 ): Library {
+  selectedReferences.forEach((ref) => {
+    ref.library = libraryToAddRefs;
+  });
   const updatedReferences = [
     ...libraryToAddRefs.references,
     ...selectedReferences.filter(

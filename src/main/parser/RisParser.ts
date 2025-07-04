@@ -9,6 +9,10 @@ export default class RisParser implements IParser {
     const library = new Library(filePath);
     let currentEntry: Record<string, any> = {};
 
+    const bibFilePath = filePath.replace(/\.ris$/, '.bib');
+    library.filePath = bibFilePath;
+    library.name = path.basename(bibFilePath);
+
     lines.forEach((line) => {
       const match = line.match(/^([A-Z0-9]{2}) {2}- (.+)$/);
       if (match) {
@@ -54,6 +58,7 @@ export default class RisParser implements IParser {
         });
 
         const reference = new Reference(
+          library,
           undefined, // id will be auto-generated
           undefined, // key will be auto-generated or set later
           currentEntry.entryType?.toLowerCase(),
@@ -79,10 +84,6 @@ export default class RisParser implements IParser {
         currentEntry = {};
       }
     });
-
-    const bibFilePath = filePath.replace(/\.ris$/, '.bib');
-    library.filePath = bibFilePath;
-    library.name = path.basename(bibFilePath);
 
     return library;
   }
