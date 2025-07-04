@@ -48,11 +48,7 @@ export function searchReferences(
   if (filteredRefs.length === 0) {
     return undefined;
   }
-  const filteredLibrary = new Library(
-    'Search Lib Path',
-    'Search Lib Name',
-    filteredRefs,
-  );
+  const filteredLibrary = new Library('Search', 'Search', filteredRefs);
   return filteredLibrary;
 }
 
@@ -75,7 +71,7 @@ export function findDuplicates(selectedLibrary: Library): Library | undefined {
   });
   const duplicateLibrary = new Library(
     'Duplicates',
-    'Duplicate References',
+    'Duplicates',
     duplicateGroups.flat(),
   );
   return duplicateLibrary;

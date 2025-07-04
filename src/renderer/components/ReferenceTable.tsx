@@ -64,23 +64,43 @@ function ReferenceTable({
 
   const handleSaveReference = async (updatedReference: IReference) => {
     if (!selectedLibrary) return;
-    // if (selectedLibrary == duplicates || selectedLibrary == search) ... find correct selectedLib
+    let targetLibrary = selectedLibrary;
+    if (
+      selectedLibrary.name === 'Duplicates' ||
+      selectedLibrary.name === 'Search'
+    ) {
+      const containingLibrary = libraries.find((lib) =>
+        lib.references.some((ref) => ref.id === updatedReference.id),
+      );
+      if (!containingLibrary) return;
+      targetLibrary = containingLibrary;
+    }
     const updatedLibrary = await window.electron.ipcRenderer.invoke(
       'save-reference',
       updatedReference,
-      selectedLibrary,
+      targetLibrary,
     );
     onEditLibrary(updatedLibrary);
     handleCloseModal();
   };
 
   const handleDeleteReference = async () => {
-    if (!selectedLibrary) return;
-    // if (selectedLibrary == duplicates || selectedLibrary == search) ... find correct selectedLib
+    if (!selectedLibrary || !selectedReference) return;
+    let targetLibrary = selectedLibrary;
+    if (
+      selectedLibrary.name === 'Duplicates' ||
+      selectedLibrary.name === 'Search'
+    ) {
+      const containingLibrary = libraries.find((lib) =>
+        lib.references.some((ref) => ref.id === selectedReference.id),
+      );
+      if (!containingLibrary) return;
+      targetLibrary = containingLibrary;
+    }
     const updatedLibrary = await window.electron.ipcRenderer.invoke(
       'delete-reference',
       selectedReference,
-      selectedLibrary,
+      targetLibrary,
     );
     onEditLibrary(updatedLibrary);
     handleCloseModal();
