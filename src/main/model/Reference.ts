@@ -86,7 +86,7 @@ export default class Reference implements IReference {
 
   static from(data: IReference): Reference {
     return new Reference(
-      data.library ? Library.from(data.library) : undefined,
+      undefined,
       data.id,
       data.key,
       data.entryType,

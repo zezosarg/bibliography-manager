@@ -20,7 +20,11 @@ export default class Library implements ILibrary {
     const references = data.references.map((ref) => {
       return Reference.from(ref);
     });
-    return new Library(data.filePath, data.name, references);
+    const lib = new Library(data.filePath, data.name, references);
+    lib.references.forEach((ref) => {
+      ref.library = lib;
+    });
+    return lib;
   }
 
   listReferences(): string {

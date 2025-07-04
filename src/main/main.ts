@@ -54,6 +54,8 @@ ipcMain.handle('load-libraries', async () => {
 
 ipcMain.handle('link-file', async (_event, reference) => {
   const refInstance = Reference.from(reference);
+  const refLib = Library.from(reference.library);
+  refInstance.library = refLib;
   const linkedRef = linkFile(refInstance);
   return linkedRef;
 });
@@ -84,14 +86,18 @@ ipcMain.handle('export-formatted', async (_event, library, format) => {
 });
 
 ipcMain.handle('save-reference', async (_event, updatedReference) => {
-  const referenceInstance = Reference.from(updatedReference);
-  const updatedLibrary = saveReference(referenceInstance);
+  const refInstance = Reference.from(updatedReference);
+  const refLib = Library.from(updatedReference.library);
+  refInstance.library = refLib;
+  const updatedLibrary = saveReference(refInstance);
   return updatedLibrary;
 });
 
 ipcMain.handle('delete-reference', async (_event, selectedReference) => {
-  const referenceInstance = Reference.from(selectedReference);
-  const updatedLibrary = deleteReference(referenceInstance);
+  const refInstance = Reference.from(selectedReference);
+  const refLib = Library.from(selectedReference.library);
+  refInstance.library = refLib;
+  const updatedLibrary = deleteReference(refInstance);
   return updatedLibrary;
 });
 
@@ -105,6 +111,9 @@ ipcMain.handle(
   async (_event, libraryToAddRefs, selectedReferences) => {
     const libraryInstance = Library.from(libraryToAddRefs);
     const selectedRefsInstances = selectedReferences.map(Reference.from);
+    selectedRefsInstances.forEach((ref: { library: Library }) => {
+      ref.library = libraryInstance;
+    });
     const updatedLibrary = addReferences(
       libraryInstance,
       selectedRefsInstances,
@@ -115,12 +124,16 @@ ipcMain.handle(
 
 ipcMain.handle('convert-reference', async (_event, reference) => {
   const refInstance = Reference.from(reference);
+  const refLib = Library.from(reference.library);
+  refInstance.library = refLib;
   const convertedRef = convertReference(refInstance);
   return convertedRef;
 });
 
 ipcMain.handle('update-reference', async (_event, reference, bibTeXString) => {
   const refInstance = Reference.from(reference);
+  const refLib = Library.from(reference.library);
+  refInstance.library = refLib;
   const updatedRef = updateReference(refInstance, bibTeXString);
   return updatedRef;
 });
