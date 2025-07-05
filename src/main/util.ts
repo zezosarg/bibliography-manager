@@ -17,6 +17,17 @@ export function resolveHtmlPath(htmlFileName: string) {
   return `file://${path.resolve(__dirname, '../renderer/', htmlFileName)}`;
 }
 
+export async function writeLibrary(library: Library): Promise<boolean> {
+  const bibContent = library.listReferences();
+  try {
+    fs.writeFileSync(library.filePath, bibContent, 'utf8');
+    return true;
+  } catch (error) {
+    console.error('Error saving library:', error);
+    return false;
+  }
+}
+
 export async function updatePathsFile(
   library: Library,
   action: 'add' | 'remove',

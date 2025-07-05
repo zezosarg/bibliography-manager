@@ -2,7 +2,6 @@ import Reference from '../model/Reference';
 import Library from '../model/Library';
 import { openFileDialog } from '../util';
 import getParser from '../parser/ParserFactory';
-// import { writeLibrary } from './LibraryService';
 
 export function saveReference(
   updatedReference: Reference,

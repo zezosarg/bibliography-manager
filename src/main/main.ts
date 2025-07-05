@@ -12,10 +12,14 @@ import path from 'path';
 import { app, BrowserWindow, ipcMain, shell } from 'electron';
 import { autoUpdater } from 'electron-updater';
 import log from 'electron-log';
-import { resolveHtmlPath, updatePathsFile, loadLibraries } from './util';
+import {
+  resolveHtmlPath,
+  updatePathsFile,
+  loadLibraries,
+  writeLibrary,
+} from './util';
 import MenuBuilder from './menu';
 import {
-  writeLibrary,
   searchReferences,
   findDuplicates,
   exportFormatted,

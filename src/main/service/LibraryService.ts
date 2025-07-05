@@ -1,18 +1,6 @@
 import { clipboard } from 'electron';
-import fs from 'fs';
 import Library from '../model/Library';
 import Reference from '../model/Reference';
-
-export async function writeLibrary(library: Library): Promise<boolean> {
-  const bibContent = library.listReferences();
-  try {
-    fs.writeFileSync(library.filePath, bibContent, 'utf8');
-    return true;
-  } catch (error) {
-    console.error('Error saving library:', error);
-    return false;
-  }
-}
 
 export function searchReferences(
   query: string,
@@ -52,23 +40,100 @@ export function searchReferences(
   return filteredLibrary;
 }
 
+// Helper function to calculate string similarity using Levenshtein distance
+function calculateSimilarity(str1: string, str2: string): number {
+  if (!str1 || !str2) return 0;
+
+  const len1 = str1.length;
+  const len2 = str2.length;
+
+  if (len1 === 0) return len2;
+  if (len2 === 0) return len1;
+
+  const matrix = Array(len2 + 1)
+    .fill(null)
+    .map(() => Array(len1 + 1).fill(null));
+
+  for (let i = 0; i <= len1; i += 1) matrix[0][i] = i;
+  for (let j = 0; j <= len2; j += 1) matrix[j][0] = j;
+
+  for (let j = 1; j <= len2; j += 1) {
+    for (let i = 1; i <= len1; i += 1) {
+      const cost = str1[i - 1] === str2[j - 1] ? 0 : 1;
+      matrix[j][i] = Math.min(
+        matrix[j - 1][i] + 1, // deletion
+        matrix[j][i - 1] + 1, // insertion
+        matrix[j - 1][i - 1] + cost, // substitution
+      );
+    }
+  }
+
+  const distance = matrix[len2][len1];
+  const maxLen = Math.max(len1, len2);
+  return (maxLen - distance) / maxLen;
+}
+
+function normalizeText(text: string): string {
+  return text
+    .toLowerCase()
+    .replace(/[^\w\s]/g, '') // Remove punctuation
+    .replace(/\s+/g, ' ') // Normalize whitespace
+    .trim();
+}
+
+function areReferencesSimilar(
+  ref1: Reference,
+  ref2: Reference,
+  threshold: number = 0.8,
+): boolean {
+  const title1 = normalizeText(ref1.title || '');
+  const title2 = normalizeText(ref2.title || '');
+  const author1 = normalizeText(ref1.author || '');
+  const author2 = normalizeText(ref2.author || '');
+
+  const titleSimilarity = calculateSimilarity(title1, title2);
+  const authorSimilarity = calculateSimilarity(author1, author2);
+  const yearMatch = ref1.year === ref2.year;
+
+  // Consider similar if:
+  // 1. High title similarity AND (author similarity OR same year)
+  // 2. High author similarity AND same year AND moderate title similarity
+  return (
+    (titleSimilarity >= threshold && (authorSimilarity >= 0.7 || yearMatch)) ||
+    (authorSimilarity >= threshold && yearMatch && titleSimilarity >= 0.6)
+  );
+}
+
 export function findDuplicates(selectedLibrary: Library): Library | undefined {
   const { references } = selectedLibrary;
-  const seen = new Map<string, Reference[]>();
   const duplicateGroups: Reference[][] = [];
-  references.forEach((ref) => {
-    const key = `${ref.title?.toLowerCase() || ''}-${ref.author?.toLowerCase() || ''}-${ref.year || ''}`;
-    if (seen.has(key)) {
-      seen.get(key)?.push(ref);
-    } else {
-      seen.set(key, [ref]);
+  const processed = new Set<number>();
+
+  for (let i = 0; i < references.length; i += 1) {
+    if (!processed.has(i)) {
+      const currentGroup: Reference[] = [references[i]];
+      processed.add(i);
+
+      for (let j = i + 1; j < references.length; j += 1) {
+        if (
+          !processed.has(j) &&
+          areReferencesSimilar(references[i], references[j])
+        ) {
+          currentGroup.push(references[j]);
+          processed.add(j);
+        }
+      }
+
+      if (currentGroup.length > 1) {
+        duplicateGroups.push(currentGroup);
+      }
     }
-  });
-  seen.forEach((group) => {
-    if (group.length > 1) {
-      duplicateGroups.push(group);
-    }
-  });
+  }
+
+  if (duplicateGroups.length === 0) {
+    return undefined;
+  }
+
   const duplicateLibrary = new Library(
     'Duplicates',
     'Duplicates',
